@@ -64,4 +64,4 @@ let generateComponent = async () => {
 	);
 };
 
-module.exports = { generateComponent };
+module.exports = generateComponent;
