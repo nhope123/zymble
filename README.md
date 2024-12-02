@@ -1,7 +1,33 @@
-<img src="./assets/zymble.svg" alt="Zymble Logo" /> 
-# Zymble
+
+<style>
+  .header-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+  }
+  .header-container img {
+    margin-right: 10px;
+  }
+  img {
+    width: 90px;
+    height: 90px;
+  }
+  .brand {
+    /* font-family: Poppins; */
+    color: #1F77FF;
+    font-style: italic;
+    
+  }
+</style>
+
+<div class="header-container">
+  <img src="assets/zymble-logo-bg.png" alt="Logo" />
+  <h1 class="brand">Zymble</h1>  
+</div>
 
 ## Description
+
 
 Zymble is a VS Code extension that simplifies the React workflow by providing commands to generate React components and hooks with ease.
 

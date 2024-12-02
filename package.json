@@ -1,54 +1,55 @@
 {
-  "name": "zymble",
-  "displayName": "Zymble",
-  "description": "React Workflow Simplified!",
-  "version": "1.1.0",
-  "license": "MIT",
-  "publisher": "nye",
-	"keywords": [
-		"react",
-		"vite",
-		"typescript",
-		"mui",
-		"i18n",
-    "Workflow",
-    "Simplified"
-	],
-	"engines": {
-		"vscode": "^1.95.0"
-	},
-	"categories": [
-		"Programming Languages"
-	],
-  "activationEvents": [],
-  "main": "./extension.js",
-  "contributes": {
-    "commands": [
-			{
-				"command": "zymble.createComponent",
-				"title": "Create Component",
-				"category": "Zymble"
-			},
-			{
-				"command": "zymble.createHook",
-				"title": "Create React Hook",
-				"category": "Zymble"
-			}
-		]
-  },
-  "scripts": {
-    "lint": "eslint .",
-    "pretest": "yarn run lint",
-    "test": "vscode-test"
-  },
-  "devDependencies": {
-    "@types/vscode": "^1.95.0",
-    "@types/mocha": "^10.0.6",
-    "@types/node": "18.x",
-    "eslint": "^8.54.0",
-    "typescript": "^5.3.2",
-    "@vscode/vsce": "^3.2.1",
-    "@vscode/test-cli": "^0.0.4",
-    "@vscode/test-electron": "^2.3.8"
-  }
+ "name": "zymble",
+ "displayName": "Zymble",
+ "description": "React Workflow Simplified!",
+ "version": "1.1.0",
+ "license": "MIT",
+ "publisher": "nye",
+ "keywords": [
+  "react",
+  "vite",
+  "typescript",
+  "mui",
+  "i18n",
+  "Workflow",
+  "Simplified"
+ ],
+ "engines": {
+  "vscode": "^1.95.0"
+ },
+ "categories": [
+  "Programming Languages"
+ ],
+ "activationEvents": [],
+ "main": "./extension.js",
+ "contributes": {
+  "commands": [
+   {
+    "command": "zymble.createComponent",
+    "title": "Create Component",
+    "category": "Zymble"
+   },
+   {
+    "command": "zymble.createHook",
+    "title": "Create React Hook",
+    "category": "Zymble"
+   }
+  ]
+ },
+ "scripts": {
+  "lint": "eslint .",
+  "pretest": "yarn run lint",
+  "test": "vscode-test"
+ },
+ "devDependencies": {
+  "@types/mocha": "^10.0.6",
+  "@types/node": "18.x",
+  "@types/vscode": "^1.95.0",
+  "@vscode/test-cli": "^0.0.4",
+  "@vscode/test-electron": "^2.3.8",
+  "@vscode/vsce": "^3.2.1",
+  "eslint": "^8.54.0",
+  "sharp": "^0.33.5",
+  "typescript": "^5.3.2"
+ }
 }
