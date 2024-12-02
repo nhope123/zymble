@@ -19,7 +19,8 @@ Zymble is a VS Code extension that simplifies the React workflow by providing co
 ## Instructions
 
 ### Cloning the Repository
-```sh
+
+````sh
 git clone https://github.com/yourusername/zymble.git
 cd zymble
 
@@ -50,7 +51,7 @@ Zymble is a VS Code extension that simplifies the React workflow by providing co
 ```sh
 git clone https://github.com/yourusername/zymble.git
 cd zymble
-```
+````
 
 ### Running in Debug Mode
 
@@ -67,8 +68,8 @@ cd zymble
 
 This extension contributes the following settings:
 
-* `zymble.enable`: Enable/disable this extension.
-* `zymble.someSetting`: Description of what this setting does.
+- `zymble.enable`: Enable/disable this extension.
+- `zymble.someSetting`: Description of what this setting does.
 
 ## Release Notes
 
@@ -90,16 +91,18 @@ This extension contributes the following settings:
 
 You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets
+- Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
+- Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
+- Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets
 
 ## For more information
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+- [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
+- [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
 
 **Enjoy!**
+
 ```
 
 Make sure to replace placeholders like `yourusername` and `images/logo.png` with actual values relevant to your project.
+```
