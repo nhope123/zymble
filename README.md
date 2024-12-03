@@ -47,8 +47,10 @@ Zymble is a VS Code extension that simplifies the React workflow by providing co
 ### Cloning the Repository
 
 ````sh
-git clone https://github.com/yourusername/zymble.git
+git clone https://github.com/nhope123/zymble.git
 cd zymble
+yarn install
+````
 
 To optimize and complete the README for your extension, you can follow this structure:
 
