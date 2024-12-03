@@ -1,30 +1,10 @@
 
-<style>
-  .header-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-  }
-  .header-container img {
-    margin-right: 10px;
-  }
-  img {
-    width: 90px;
-    height: 90px;
-  }
-  .brand {
-    /* font-family: Poppins; */
-    color: #1F77FF;
-    font-style: italic;
-    
-  }
-</style>
+<h1 style="color: #1F77FF;font-style: italic; ">  
+  <img style="width: 90px; height: 90px;" src="assets/zymble-logo-bg.png" alt="Logo" />
+  Zymble 
+</h1>  
 
-<div class="header-container">
-  <img src="assets/zymble-logo-bg.png" alt="Logo" />
-  <h1 class="brand">Zymble</h1>  
-</div>
+
 
 ## Description
 
@@ -47,10 +27,8 @@ Zymble is a VS Code extension that simplifies the React workflow by providing co
 ### Cloning the Repository
 
 ````sh
-git clone https://github.com/nhope123/zymble.git
+git clone https://github.com/yourusername/zymble.git
 cd zymble
-yarn install
-````
 
 To optimize and complete the README for your extension, you can follow this structure:
 
