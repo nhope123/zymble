@@ -54,7 +54,7 @@ let generateComponent = async () => {
 	fs.mkdirSync(componentFolderPath);
 
 	// Define the files and their contents
-	const files = generateComponentFiles(componentName, hasProps);
+	const files = await generateComponentFiles(componentName, hasProps);
 
 	// Create each file with its corresponding content
   createFilesWithContent(componentFolderPath, files);

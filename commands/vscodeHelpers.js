@@ -132,6 +132,24 @@ const findDirectory = async (name) => {
   return;
 };
 
+const getFileType = async () => {
+	const workspaceFolders = getCurrentWorkspaceFolders();
+	if (!workspaceFolders) {
+		return;
+	}
+
+	for (const folder of workspaceFolders) {
+		const tsFiles = await vscode.workspace.findFiles(
+			new vscode.RelativePattern(folder, '**/*.ts')
+		);
+		if (tsFiles.length > 0) {
+			return  ['tsx', 'ts'];
+		}
+	}
+
+	return ['jsx', 'js'];
+}
+
 module.exports = {
 	createFilesWithContent,
   getComponentName,
@@ -139,4 +157,5 @@ module.exports = {
 	getTargetFolder,
 	showQuickPick,
 	findDirectory,
+	getFileType,
 }

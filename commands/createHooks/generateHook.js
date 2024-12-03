@@ -67,7 +67,7 @@ const generateHook = async () => {
 	fs.mkdirSync(componentFolderPath);
 
 	// generate hook files
-	const files = generateHookFiles(hookName, hasUseState, hasUseEffect);
+	const files = await generateHookFiles(hookName, hasUseState, hasUseEffect);
 
 	// Create each file with its corresponding content
 	createFilesWithContent(componentFolderPath, files);

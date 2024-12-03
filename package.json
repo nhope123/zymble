@@ -5,6 +5,7 @@
  "version": "1.1.0",
  "license": "MIT",
  "publisher": "nye",
+ "repository": "https://github.com/nhope123/zymble.git",
  "keywords": [
   "react",
   "vite",
@@ -39,7 +40,7 @@
  "scripts": {
   "lint": "eslint .",
   "pretest": "yarn run lint",
-  "test": "vscode-test"
+  "test": "node --force-node-api-uncaught-exceptions-policy=true ./node_modules/@vscode/test-electron/out/runTest.js"
  },
  "devDependencies": {
   "@types/mocha": "^10.0.6",

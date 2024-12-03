@@ -1,4 +1,5 @@
 const { createFileObject } = require('../generatorHelpers');
+const { getFileType } = require('../vscodeHelpers');
 /**
  * Generates the source code for a React functional component.
  *
@@ -76,26 +77,29 @@ describe('${componentName}', () => {
  * @param hasProps - A boolean indicating whether the component has props. Defaults to `false`.
  * @returns An object containing the generated files.
  */
-const generateComponentFiles = (
+const generateComponentFiles = async (
 	componentName,
 	hasProps = false
 ) => {
+
+	const extension = await getFileType();
+
 	const filesToGenerate = {
 		...createFileObject(
 			componentName,
-			'tsx',
+			extension[0],
 			createComponentSource(componentName, hasProps)
 		),
 		...(hasProps
 			? createFileObject(
 					'types',
-					'ts',
+					extension[1],
 					createComponentPropsDefinition(componentName)
 			  )
 			: {}),
 		...createFileObject(
 			`${componentName}.test`,
-			'tsx',
+			extension[0],
 			createComponentTestContent(componentName)
 		),
 	};

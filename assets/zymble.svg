@@ -1,0 +1,25 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Orbital Paths -->
+  <path d="M50 60 C 50 40, 150 40, 150 60 C 150 80, 50 80, 50 60" 
+        stroke="#2D3748" stroke-width="12" fill="none"/>
+  <path d="M50 140 C 50 120, 150 120, 150 140 C 150 160, 50 160, 50 140" 
+        stroke="#2D3748" stroke-width="12" fill="none"/>
+  
+  <!-- Z Letter -->
+  <path d="M70 60 L130 60 L70 140 L130 140" 
+        stroke="url(#z-gradient)" stroke-width="16" stroke-linecap="round"/>
+  
+  <!-- Orbital Nodes -->
+  <circle cx="50" cy="60" r="8" fill="#4FD1C5"/>
+  <circle cx="150" cy="60" r="8" fill="#4FD1C5"/>
+  <circle cx="50" cy="140" r="8" fill="#63B3ED"/>
+  <circle cx="150" cy="140" r="8" fill="#63B3ED"/>
+  
+  <!-- Gradient Definition -->
+  <defs>
+    <linearGradient id="z-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4FD1C5"/>
+      <stop offset="100%" style="stop-color:#63B3ED"/>
+    </linearGradient>
+  </defs>
+</svg>
