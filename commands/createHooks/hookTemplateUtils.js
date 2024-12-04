@@ -1,13 +1,19 @@
-const { capitalize, createFileObject } = require("../generatorHelpers.js");
+const { capitalize, createFileObject } = require('../generatorHelpers.js');
 const { getFileType } = require('../vscodeHelpers.js');
 
 const createHookSource = (hookName, hasState, hasEffect) => {
-  const stateImport = hasState || hasEffect ? `import { ${hasState ? 'useState,' : ''} ${hasEffect ? 'useEffect' : ''} } from 'react';\n` : '';
-  const stateDeclaration = hasState ? `const [state, setState] = useState<>(null);\n` : '';
-  const effectDeclaration = hasEffect ? `useEffect(() => {\n    // effect logic\n  }, []);\n` : '';
+  const stateImport =
+    hasState || hasEffect
+      ? `import { ${hasState ? 'useState,' : ''} ${hasEffect ? 'useEffect' : ''} } from 'react';\n`
+      : '';
+  const stateDeclaration = hasState
+    ? `const [state, setState] = useState<>(null);\n`
+    : '';
+  const effectDeclaration = hasEffect
+    ? `useEffect(() => {\n    // effect logic\n  }, []);\n`
+    : '';
 
-  return (
-`${stateImport}import { ${capitalize(hookName)}ReturnType } from './types';
+  return `${stateImport}import { ${capitalize(hookName)}ReturnType } from './types';
 
 const ${hookName} = (): ${capitalize(hookName)}ReturnType  => {
   ${stateDeclaration}
@@ -16,7 +22,7 @@ const ${hookName} = (): ${capitalize(hookName)}ReturnType  => {
 };
 
 export default ${hookName};
-`);
+`;
 };
 
 const createHookTestContent = (hookName) => {
@@ -40,7 +46,11 @@ const createHookTypeDefinition = (hookName) => {
 `;
 };
 
-const generateHookFiles = async (hookName, hasState = false, hasEffect = false) => {
+const generateHookFiles = async (
+  hookName,
+  hasState = false,
+  hasEffect = false
+) => {
   try {
     const extension = await getFileType();
     const filesToGenerate = {
@@ -64,7 +74,7 @@ const generateHookFiles = async (hookName, hasState = false, hasEffect = false) 
     return filesToGenerate;
   } catch (error) {
     console.error(error.message);
-    throw new Error('Unable to gernerate hook files.');    
+    throw new Error('Unable to gernerate hook files.');
   }
 };
 

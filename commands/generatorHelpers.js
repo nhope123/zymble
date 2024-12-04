@@ -7,12 +7,12 @@
  * @returns An object representing the file, with the key being the file name and extension, and the value being the content.
  */
 const createFileObject = (name, extension, content) => ({
-	[`${name}.${extension}`]: content,
+  [`${name}.${extension}`]: content,
 });
 
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 module.exports = {
-	createFileObject,
-	capitalize,
-}
+  createFileObject,
+  capitalize,
+};

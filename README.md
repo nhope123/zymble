@@ -1,13 +1,9 @@
-
 <h1 style="color: #1F77FF;font-style: italic; ">  
   <img style="width: 90px; height: 90px;" src="assets/zymble-logo-bg.png" alt="Logo" />
   Zymble 
-</h1>  
-
-
+</h1>
 
 ## Description
-
 
 Zymble is a VS Code extension that simplifies the React workflow by providing commands to generate React components and hooks with ease.
 

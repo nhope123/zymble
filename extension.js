@@ -12,27 +12,21 @@ const { updateContextMenu } = require('./commands/vscodeHelpers');
  * @param {vscode.ExtensionContext} context
  */
 const activate = (context) => {
-	updateContextMenu();
+  updateContextMenu();
 
-	context.subscriptions.push(
-		vscode.commands.registerCommand(
-			'zymble.createComponent',
-			generateComponent
-		)
-	);
+  context.subscriptions.push(
+    vscode.commands.registerCommand('zymble.createComponent', generateComponent)
+  );
 
-	context.subscriptions.push(
-		vscode.commands.registerCommand(
-			'zymble.createHook',
-			generateHook
-		)
-	);
+  context.subscriptions.push(
+    vscode.commands.registerCommand('zymble.createHook', generateHook)
+  );
 };
 
 // This method is called when your extension is deactivated
 const deactivate = () => {};
 
 module.exports = {
-	activate,
-	deactivate,
+  activate,
+  deactivate,
 };

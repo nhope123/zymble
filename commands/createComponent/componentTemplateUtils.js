@@ -14,25 +14,22 @@ const { getFileType } = require('../vscodeHelpers');
  * - Return a simple JSX element containing the component's name.
  * - Export the component as the default export.
  */
-const createComponentSource = (
-	componentName,
-	hasProps = false
-) => {
-	const componentFunctionType = hasProps
-		? `FC<${componentName}Props> = (props)`
-		: `FC = ()`;
-	const conditionalPropsImport = hasProps
-		? `\nimport { ${componentName}Props } from './types';\n`
-		: '\n';
-	const componentImportStatement = `import { FC } from 'react';${conditionalPropsImport}`;
-	const createComponentDeclaration = `
+const createComponentSource = (componentName, hasProps = false) => {
+  const componentFunctionType = hasProps
+    ? `FC<${componentName}Props> = (props)`
+    : `FC = ()`;
+  const conditionalPropsImport = hasProps
+    ? `\nimport { ${componentName}Props } from './types';\n`
+    : '\n';
+  const componentImportStatement = `import { FC } from 'react';${conditionalPropsImport}`;
+  const createComponentDeclaration = `
 const ${componentName}: ${componentFunctionType} => {
   ${hasProps ? 'const { } = props;\n' : ''}
   return <div>${componentName} Component</div>;\n};
   \nexport default ${componentName};
   `;
 
-	return componentImportStatement + createComponentDeclaration;
+  return componentImportStatement + createComponentDeclaration;
 };
 
 /**
@@ -42,7 +39,7 @@ const ${componentName}: ${componentFunctionType} => {
  * @returns A string representing the TypeScript interface definition for the component's props.
  */
 const createComponentPropsDefinition = (componentName) =>
-	`interface ${componentName}Props {\n\n};\n\nexport { ${componentName}Props };`;
+  `interface ${componentName}Props {\n\n};\n\nexport { ${componentName}Props };`;
 
 /**
  * Generates the content for a component test file.
@@ -54,11 +51,11 @@ const createComponentPropsDefinition = (componentName) =>
  * @returns A string containing the test file content for the specified component.
  */
 const createComponentTestContent = (componentName) => {
-	const componentTestImport = `import { render } from '@testing-library/react';
+  const componentTestImport = `import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import ${componentName} from './${componentName}';
 `;
-	const renderTestDeclaration = `
+  const renderTestDeclaration = `
 describe('${componentName}', () => {  
   it('renders ${componentName}', () => {
     const { getByText } = render(<${componentName} />);\n
@@ -67,7 +64,7 @@ describe('${componentName}', () => {
 });
 `;
 
-	return componentTestImport + renderTestDeclaration;
+  return componentTestImport + renderTestDeclaration;
 };
 
 /**
@@ -77,44 +74,40 @@ describe('${componentName}', () => {
  * @param hasProps - A boolean indicating whether the component has props. Defaults to `false`.
  * @returns An object containing the generated files.
  */
-const generateComponentFiles = async (
-	componentName,
-	hasProps = false
-) => {
+const generateComponentFiles = async (componentName, hasProps = false) => {
+  try {
+    const extension = await getFileType();
 
-	try {
-		const extension = await getFileType();
+    const filesToGenerate = {
+      ...createFileObject(
+        componentName,
+        extension[0],
+        createComponentSource(componentName, hasProps)
+      ),
+      ...(hasProps
+        ? createFileObject(
+            'types',
+            extension[1],
+            createComponentPropsDefinition(componentName)
+          )
+        : {}),
+      ...createFileObject(
+        `${componentName}.test`,
+        extension[0],
+        createComponentTestContent(componentName)
+      ),
+    };
 
-		const filesToGenerate = {
-			...createFileObject(
-				componentName,
-				extension[0],
-				createComponentSource(componentName, hasProps)
-			),
-			...(hasProps
-				? createFileObject(
-						'types',
-						extension[1],
-						createComponentPropsDefinition(componentName)
-					)
-				: {}),
-			...createFileObject(
-				`${componentName}.test`,
-				extension[0],
-				createComponentTestContent(componentName)
-			),
-		};
-
-		return filesToGenerate;
-	} catch (error) {
-		console.error(error);
-		return;
-	}
+    return filesToGenerate;
+  } catch (error) {
+    console.error(error);
+    return;
+  }
 };
 
 module.exports = {
-	createComponentPropsDefinition,
-	createComponentSource,
-	createComponentTestContent,
-	generateComponentFiles
- };
+  createComponentPropsDefinition,
+  createComponentSource,
+  createComponentTestContent,
+  generateComponentFiles,
+};

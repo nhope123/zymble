@@ -45,13 +45,16 @@ describe.skip('generateComponent', () => {
       generateComponentFiles: sandbox.stub(),
     };
 
-    generateComponent = proxyquire('../../commands/createComponent/generateComponent', {
-      'fs': fsMock,
-      'path': pathMock,
-      'vscode': vscodeMock,
-      '../vscodeHelpers': helpersMock,
-      './componentTemplateUtils': componentTemplateUtilsMock,
-    });
+    generateComponent = proxyquire(
+      '../../commands/createComponent/generateComponent',
+      {
+        fs: fsMock,
+        path: pathMock,
+        vscode: vscodeMock,
+        '../vscodeHelpers': helpersMock,
+        './componentTemplateUtils': componentTemplateUtilsMock,
+      }
+    );
   });
 
   afterEach(() => {
@@ -116,7 +119,10 @@ describe.skip('generateComponent', () => {
     helpersMock.getComponentName.resolves('TestComponent');
     helpersMock.getTargetFolder.resolves('targetFolder');
     fsMock.existsSync.returns(false);
-    componentTemplateUtilsMock.generateComponentFiles.returns(['file1', 'file2']);
+    componentTemplateUtilsMock.generateComponentFiles.returns([
+      'file1',
+      'file2',
+    ]);
 
     await generateComponent();
 
@@ -146,8 +152,13 @@ describe.skip('generateComponent', () => {
     helpersMock.getComponentName.resolves('TestComponent');
     helpersMock.getTargetFolder.resolves('targetFolder');
     fsMock.existsSync.returns(false);
-    componentTemplateUtilsMock.generateComponentFiles.returns(['file1', 'file2']);
-    helpersMock.createFilesWithContent.throws(new Error('Error creating files'));
+    componentTemplateUtilsMock.generateComponentFiles.returns([
+      'file1',
+      'file2',
+    ]);
+    helpersMock.createFilesWithContent.throws(
+      new Error('Error creating files')
+    );
 
     try {
       await generateComponent();
