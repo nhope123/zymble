@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const vscode = require('vscode');
 const {
+	processContextMenuPath,
   createFilesWithContent,
   getComponentName,
 	getCurrentWorkspaceFolders,
@@ -10,7 +11,8 @@ const {
 } = require('../vscodeHelpers');
 const { generateComponentFiles } = require('./componentTemplateUtils');
 
-let generateComponent = async () => {
+let generateComponent = async (uri) => {
+	
 	const workspaceFolder = getCurrentWorkspaceFolders();
 	if (!workspaceFolder) {
 		return;
@@ -32,8 +34,9 @@ let generateComponent = async () => {
 		'Yes';
 
 	// Get target folder
-	let targetFolderPath = await getTargetFolder();
-  if (! targetFolderPath) {return;}
+	const menuContextPath = processContextMenuPath(uri);	
+	let targetFolderPath = menuContextPath ? menuContextPath : await getTargetFolder();
+	if (! targetFolderPath) {return;}
 
 	// Create the folder for the new component
 	const componentFolderPath = path.join(targetFolderPath, componentName);

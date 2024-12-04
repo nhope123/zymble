@@ -6,6 +6,7 @@
  "license": "MIT",
  "publisher": "nye",
  "repository": "https://github.com/nhope123/zymble.git",
+ "icon": "assets/logo.png",
  "keywords": [
   "react",
   "vite",
@@ -21,13 +22,15 @@
  "categories": [
   "Programming Languages"
  ],
- "activationEvents": [],
+ "activationEvents": [
+  "workspaceContains:package.json"
+ ],
  "main": "./extension.js",
  "contributes": {
   "commands": [
    {
     "command": "zymble.createComponent",
-    "title": "Create Component",
+    "title": "Create React Component",
     "category": "Zymble"
    },
    {
@@ -35,7 +38,21 @@
     "title": "Create React Hook",
     "category": "Zymble"
    }
-  ]
+  ],
+  "menus": {
+    "explorer/context": [
+      {
+        "command": "zymble.createComponent",
+        "when": "isReactProject",
+        "group": "zymble"
+      },
+      {
+        "command": "zymble.createHook",
+        "when": "isReactProject",
+        "group": "zymble"
+      }
+    ]
+  }
  },
  "scripts": {
   "lint": "eslint .",

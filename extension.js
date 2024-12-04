@@ -3,6 +3,7 @@
 const vscode = require('vscode');
 const generateComponent = require('./commands/createComponent/generateComponent');
 const generateHook = require('./commands/createHooks/generateHook');
+const { updateContextMenu } = require('./commands/vscodeHelpers');
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -11,6 +12,8 @@ const generateHook = require('./commands/createHooks/generateHook');
  * @param {vscode.ExtensionContext} context
  */
 const activate = (context) => {
+	updateContextMenu();
+
 	context.subscriptions.push(
 		vscode.commands.registerCommand(
 			'zymble.createComponent',

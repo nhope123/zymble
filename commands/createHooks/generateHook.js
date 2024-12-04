@@ -49,7 +49,7 @@ const generateHook = async () => {
 	if (!hooksFolder) {
 		hooksFolder = await getTargetFolder([
 			{
-				path: 'src/hooks',
+				path: path.resolve(workspaceFolders[0].uri.path,'src/hooks'),
 				option: 'src/hooks',
 			},
 		]);

@@ -26,6 +26,7 @@ const showInputBox = async (prompt, invalidText) => {
 };
 
 const findDirectory = async (name) => {
+	// TODOD: does not work as intended
 	const workspaceFolders = getCurrentWorkspaceFolders();
 	if (!workspaceFolders) {
 		return;
@@ -43,61 +44,59 @@ const findDirectory = async (name) => {
 	return;
 };
 
- const getComponentName = async (prompt, invalidText) => {
-  // Prompt the user for the component name
-  let componentName = await showInputBox(prompt, invalidText);
+const getComponentName = async (prompt, invalidText) => {
+	// Prompt the user for the component name
+	let componentName = await showInputBox(prompt, invalidText);
 
-  if (!componentName) {
-    return; // User canceled the input
-  } else {
-    componentName = componentName
-      .replace(/[^a-zA-Z0-9]/g, ' ')
-      .split(' ')
-      .map((word) => word.charAt(0).toLocaleUpperCase() + word.slice(1))
-      .join('');
-  }
+	if (!componentName) {
+		return; // User canceled the input
+	} else {
+		componentName = componentName
+			.replace(/[^a-zA-Z0-9]/g, ' ')
+			.split(' ')
+			.map((word) => word.charAt(0).toLocaleUpperCase() + word.slice(1))
+			.join('');
+	}
 
-  return componentName;
+	return componentName;
 };
 
- const getTargetFolder = async (options) => {
-  const workspaceFolder = getCurrentWorkspaceFolders();
+const getTargetFolder = async (options) => {
+	const workspaceFolder = getCurrentWorkspaceFolders();
 	if (!workspaceFolder) {
 		return;
-	}	
+	}
 
-  // Get active window
-  let activeFilePath = '';
-  const activeEditor = vscode.window.activeTextEditor;
-    if (activeEditor) {
-      activeFilePath = activeEditor.document.uri.fsPath;
-    }
-  
-  let folderOptions = [SELECT_FOLDER_OPTION];
-  if (activeFilePath) { folderOptions.unshift(CURRENT_FOLDER_OPTION); }
-  if (options) {
-    folderOptions = [
-      ...options.map((i) => i.option),
-      ...folderOptions
-    ];
-  }
+	// Get active window
+	let activeFilePath = '';
+	const activeEditor = vscode.window.activeTextEditor;
+	if (activeEditor) {
+		activeFilePath = activeEditor.document.uri.fsPath;
+	}
 
-  // Let the user select a folder or use the active folder
+	let folderOptions = [SELECT_FOLDER_OPTION];
+	if (activeFilePath) {
+		folderOptions.unshift(CURRENT_FOLDER_OPTION);
+	}
+	if (options) {
+		folderOptions = [...options.map((i) => i.option), ...folderOptions];
+	}
+
+	// Let the user select a folder or use the active folder
 	const selectedFolder = await showQuickPick(
 		folderOptions,
 		'Select the target folder'
 	);
 
 	let targetFolderPath = workspaceFolder[0].uri.fsPath; // Default to root folder
-  
-  if (selectedFolder === CURRENT_FOLDER_OPTION) {
-    const activeEditor = vscode.window.activeTextEditor;
-    if (activeEditor) {
-      const activeFilePath = activeEditor.document.uri.fsPath;
-      targetFolderPath = path.dirname(activeFilePath);
-    }
-  }
-  else if (selectedFolder === SELECT_FOLDER_OPTION) {
+
+	if (selectedFolder === CURRENT_FOLDER_OPTION) {
+		const activeEditor = vscode.window.activeTextEditor;
+		if (activeEditor) {
+			const activeFilePath = activeEditor.document.uri.fsPath;
+			targetFolderPath = path.dirname(activeFilePath);
+		}
+	} else if (selectedFolder === SELECT_FOLDER_OPTION) {
 		const folderUri = await vscode.window.showOpenDialog({
 			canSelectFolders: true,
 			canSelectFiles: false,
@@ -113,23 +112,26 @@ const findDirectory = async (name) => {
 			);
 			return;
 		}
+	} else if (options) {
+		const selectedOptionPath = options.filter(
+			(i) => i.option === selectedFolder
+		)[0].path;
+		if (selectedOptionPath) {
+			targetFolderPath = selectedOptionPath;
+		}
 	}
-  else if (options) {
-    const selectedOptionPath = options.filter((i) => i.option === selectedFolder)[0].path;
-    if (selectedOptionPath) {targetFolderPath = selectedOptionPath;}
-  }
 
-  return targetFolderPath;
+	return targetFolderPath;
 };
 
- const createFilesWithContent = (folderPath, files) => {
-  // Create each file with its corresponding content
+const createFilesWithContent = (folderPath, files) => {
+	// Create each file with its corresponding content
 	for (const [fileName, content] of Object.entries(files)) {
 		const filePath = path.join(folderPath, fileName);
 		fs.writeFileSync(filePath, content);
 	}
 
-  return;
+	return;
 };
 
 const getFileType = async () => {
@@ -143,19 +145,58 @@ const getFileType = async () => {
 			new vscode.RelativePattern(folder, '**/*.ts')
 		);
 		if (tsFiles.length > 0) {
-			return  ['tsx', 'ts'];
+			return ['tsx', 'ts'];
 		}
 	}
 
 	return ['jsx', 'js'];
-}
+};
+
+const updateContextMenu = () => {
+	try {
+		const workspaceFolders = getCurrentWorkspaceFolders();
+
+		if (workspaceFolders) {
+			const packageJsonPath = path.join(
+				workspaceFolders[0].uri.fsPath,
+				'package.json'
+			);
+			if (fs.existsSync(packageJsonPath)) {
+				const packageJson = JSON.parse(
+					fs.readFileSync(packageJsonPath, 'utf8')
+				);
+				if (packageJson.dependencies && packageJson.dependencies.react) {
+					vscode.commands.executeCommand('setContext', 'isReactProject', true);
+				} else {
+					vscode.commands.executeCommand('setContext', 'isReactProject', false);
+				}
+			}
+		}
+	} catch (err) {
+		console.error('Failed to update context menu:', err);
+	}
+};
+
+const processContextMenuPath = (uri) => {
+	if (!uri) return;
+	try {
+		return !path.extname(uri._fsPath) && uri.path
+			? uri.path
+			: path.dirname(uri.path);
+	} catch (err) {
+		console.error('Menu context path error: ', err);
+	}
+	return;
+};
 
 module.exports = {
 	createFilesWithContent,
-  getComponentName,
+	findDirectory,
 	getCurrentWorkspaceFolders,
+	getFileType,
 	getTargetFolder,
 	showQuickPick,
-	findDirectory,
-	getFileType,
-}
+	updateContextMenu,
+	getComponentName,
+	processContextMenuPath,
+};
