@@ -1,70 +1,66 @@
-const fs = require('fs');
 const path = require('path');
 const vscode = require('vscode');
 const {
-	processContextMenuPath,
-  createFilesWithContent,
-  getComponentName,
+	createDirectory,
+	createFilesWithContent,
+	getComponentName,
 	getCurrentWorkspaceFolders,
 	getTargetFolder,
+	processContextMenuPath,
+	showErrorMessage,
 	showQuickPick,
 } = require('../vscodeHelpers');
 const { generateComponentFiles } = require('./componentTemplateUtils');
 
-let generateComponent = async (uri) => {
-	
-	const workspaceFolder = getCurrentWorkspaceFolders();
-	if (!workspaceFolder) {
-		return;
-	}	
+const generateComponent = async (uri) => {
+	try {
+		getCurrentWorkspaceFolders();
 
-	// Prompt the user for the component name
-	const componentName = await getComponentName(
-		'Enter the component name',
-		'Component name cannot be empty'
-	);
+		// Prompt the user for the component name
+		const componentName = await getComponentName(
+			{
+				prompt: 'Enter the component alphanumeric name',
+				title: 'Component Name',
+			},
+			'Component name cannot be empty'
+		);
 
-	if (!componentName) {
-		return; // User canceled the input
-	}
+		// Ask if the component should have props
+		const hasProps =
+			(await showQuickPick(['Yes', 'No'], 'Does the component have props?')) ===
+			'Yes';
 
-	// Ask if the component should have props
-	const hasProps =
-		(await showQuickPick(['Yes', 'No'], 'Does the component have props?')) ===
-		'Yes';
+		// Get path if command ran from menu context
+		const menuContextPath = processContextMenuPath(uri);
+		// Get target folder
+		let targetFolderPath = menuContextPath
+			? menuContextPath
+			: await getTargetFolder();
 
-	// Get target folder
-	const menuContextPath = processContextMenuPath(uri);	
-	let targetFolderPath = menuContextPath ? menuContextPath : await getTargetFolder();
-	if (! targetFolderPath) {return;}
-
-	// Create the folder for the new component
-	const componentFolderPath = path.join(targetFolderPath, componentName);
-	if (fs.existsSync(componentFolderPath)) {
-		const overwrite =
-			(await vscode.window.showQuickPick(['Yes', 'No'], {
-				placeHolder: `The folder ${componentName} already exists. Do you want to overwrite it?`,
-			})) === 'Yes';
-
-		if (!overwrite) {
-			vscode.window.showErrorMessage('Operation cancelled.');
-			return;
-		} else {
-			fs.rmdirSync(componentFolderPath, { recursive: true });
+		if (!targetFolderPath) {
+			const errorMessage =
+				'Generate component error: target folder path not found!';
+			console.error(errorMessage);
+			throw new Error(errorMessage);
 		}
+
+		// Create the folder for the new component
+		const componentFolderPath = path.join(targetFolderPath, componentName);
+		createDirectory(componentFolderPath, componentName);
+
+		// Define the files and their contents
+		const files = await generateComponentFiles(componentName, hasProps);
+
+		// Create each file with its corresponding content
+		createFilesWithContent(componentFolderPath, files);
+
+		vscode.window.showInformationMessage(
+			`Component ${componentName} created successfully!`
+		);
+	} catch (error) {
+		console.error(error.message);
+		showErrorMessage(error.message);
 	}
-
-	fs.mkdirSync(componentFolderPath);
-
-	// Define the files and their contents
-	const files = await generateComponentFiles(componentName, hasProps);
-
-	// Create each file with its corresponding content
-  createFilesWithContent(componentFolderPath, files);
-	
-	vscode.window.showInformationMessage(
-		`Component ${componentName} created successfully!`
-	);
 };
 
 module.exports = generateComponent;

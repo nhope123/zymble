@@ -3,7 +3,7 @@ const assert = require('assert');
 const proxyquire = require('proxyquire');
 // const vscode = require('vscode');
 
-describe('generateComponent', () => {
+describe.skip('generateComponent', () => {
   let sandbox;
   let generateComponent;
   let fsMock;

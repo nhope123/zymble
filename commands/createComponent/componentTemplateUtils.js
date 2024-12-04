@@ -82,29 +82,34 @@ const generateComponentFiles = async (
 	hasProps = false
 ) => {
 
-	const extension = await getFileType();
+	try {
+		const extension = await getFileType();
 
-	const filesToGenerate = {
-		...createFileObject(
-			componentName,
-			extension[0],
-			createComponentSource(componentName, hasProps)
-		),
-		...(hasProps
-			? createFileObject(
-					'types',
-					extension[1],
-					createComponentPropsDefinition(componentName)
-			  )
-			: {}),
-		...createFileObject(
-			`${componentName}.test`,
-			extension[0],
-			createComponentTestContent(componentName)
-		),
-	};
+		const filesToGenerate = {
+			...createFileObject(
+				componentName,
+				extension[0],
+				createComponentSource(componentName, hasProps)
+			),
+			...(hasProps
+				? createFileObject(
+						'types',
+						extension[1],
+						createComponentPropsDefinition(componentName)
+					)
+				: {}),
+			...createFileObject(
+				`${componentName}.test`,
+				extension[0],
+				createComponentTestContent(componentName)
+			),
+		};
 
-	return filesToGenerate;
+		return filesToGenerate;
+	} catch (error) {
+		console.error(error);
+		return;
+	}
 };
 
 module.exports = {

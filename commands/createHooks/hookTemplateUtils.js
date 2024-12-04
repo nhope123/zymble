@@ -41,26 +41,31 @@ const createHookTypeDefinition = (hookName) => {
 };
 
 const generateHookFiles = async (hookName, hasState = false, hasEffect = false) => {
-  const extension = await getFileType()[1];
-  const filesToGenerate = {
-    ...createFileObject(
-      hookName,
-      extension,
-      createHookSource(hookName, hasState, hasEffect)
-    ),
-    ...createFileObject(
-      `${hookName}.test`,
-      extension,
-      createHookTestContent(hookName)
-    ),
-    ...createFileObject(
-      'types',
-      extension,
-      createHookTypeDefinition(hookName)
-    ),
-  };
+  try {
+    const extension = await getFileType();
+    const filesToGenerate = {
+      ...createFileObject(
+        hookName,
+        extension[1],
+        createHookSource(hookName, hasState, hasEffect)
+      ),
+      ...createFileObject(
+        `${hookName}.test`,
+        extension[1],
+        createHookTestContent(hookName)
+      ),
+      ...createFileObject(
+        'types',
+        extension[1],
+        createHookTypeDefinition(hookName)
+      ),
+    };
 
-  return filesToGenerate;
+    return filesToGenerate;
+  } catch (error) {
+    console.error(error.message);
+    throw new Error('Unable to gernerate hook files.');    
+  }
 };
 
 module.exports = generateHookFiles;
