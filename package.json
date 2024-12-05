@@ -29,7 +29,7 @@
   "activationEvents": [
     "workspaceContains:package.json"
   ],
-  "main": "./extension.js",
+  "main": "./src/extension.js",
   "contributes": {
     "commands": [
       {
