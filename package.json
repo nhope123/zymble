@@ -14,7 +14,11 @@
     "mui",
     "i18n",
     "Workflow",
-    "Simplified"
+    "Simplified",
+    "Prettier",
+    "Formatting",
+    "Format",
+    "config"
   ],
   "engines": {
     "vscode": "^1.95.0"
@@ -37,6 +41,11 @@
         "command": "zymble.createHook",
         "title": "Create React Hook",
         "category": "Zymble"
+      },
+      {
+        "command": "zymble.addPrettierConfig",
+        "title": "Add Prettier Configuration",
+        "category": "Zymble"
       }
     ],
     "menus": {
@@ -44,12 +53,17 @@
         {
           "command": "zymble.createComponent",
           "when": "isReactProject",
-          "group": "zymble"
+          "group": "Zymble"
         },
         {
           "command": "zymble.createHook",
           "when": "isReactProject",
-          "group": "zymble"
+          "group": "Zymble"
+        },
+        {
+          "command": "zymble.addPrettierConfig",
+          "when": "noPrettierConfig",
+          "group": "Zymble"
         }
       ]
     }

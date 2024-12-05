@@ -176,7 +176,7 @@ const getFileType = async () => {
   return ['jsx', 'js'];
 };
 
-const updateContextMenu = () => {
+const loadJsonPackages = async () => {
   try {
     const workspaceFolders = getCurrentWorkspaceFolders();
 
@@ -186,14 +186,32 @@ const updateContextMenu = () => {
         'package.json'
       );
       if (fs.existsSync(packageJsonPath)) {
-        const packageJson = JSON.parse(
-          fs.readFileSync(packageJsonPath, 'utf8')
-        );
-        if (packageJson.dependencies && packageJson.dependencies.react) {
-          vscode.commands.executeCommand('setContext', 'isReactProject', true);
-        } else {
-          vscode.commands.executeCommand('setContext', 'isReactProject', false);
-        }
+        return await JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+      }
+    }
+  } catch (error) {
+    console.error(error.message);
+  }
+  return;
+};
+
+const updateContextMenu = async () => {
+  try {
+    const packageJson = await loadJsonPackages();
+
+    if (packageJson) {
+      if (packageJson.dependencies && packageJson.dependencies.react) {
+        vscode.commands.executeCommand('setContext', 'isReactProject', true);
+      } else {
+        vscode.commands.executeCommand('setContext', 'isReactProject', false);
+      }
+      if (
+        packageJson.devDependencies &&
+        !packageJson.devDependencies.prettier
+      ) {
+        vscode.commands.executeCommand('setContext', 'noPrettierConfig', true);
+      } else {
+        vscode.commands.executeCommand('setContext', 'noPrettierConfig', false);
       }
     }
   } catch (err) {
@@ -236,14 +254,19 @@ const createDirectory = async (path, name) => {
   }
 };
 
+const showInformationMessage = (message) => 
+  vscode.window.showInformationMessage(message); 
+
 module.exports = {
   createDirectory,
+  showInformationMessage,
   createFilesWithContent,
   findDirectory,
   getComponentName,
   getCurrentWorkspaceFolders,
   getFileType,
   getTargetFolder,
+  loadJsonPackages,
   processContextMenuPath,
   showErrorMessage,
   showQuickPick,

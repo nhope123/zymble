@@ -74,7 +74,7 @@ const generateHookFiles = async (
     return filesToGenerate;
   } catch (error) {
     console.error(error.message);
-    throw new Error('Unable to gernerate hook files.');
+    throw new Error('Unable to generate hook files.');
   }
 };
 

@@ -1,5 +1,4 @@
 const path = require('path');
-const vscode = require('vscode');
 const {
   createDirectory,
   createFilesWithContent,
@@ -8,6 +7,7 @@ const {
   getTargetFolder,
   processContextMenuPath,
   showErrorMessage,
+  showInformationMessage,
   showQuickPick,
 } = require('../vscodeHelpers');
 const { generateComponentFiles } = require('./componentTemplateUtils');
@@ -54,9 +54,7 @@ const generateComponent = async (uri) => {
     // Create each file with its corresponding content
     createFilesWithContent(componentFolderPath, files);
 
-    vscode.window.showInformationMessage(
-      `Component ${componentName} created successfully!`
-    );
+    showInformationMessage(`Component ${componentName} created successfully!`);
   } catch (error) {
     console.error(error.message);
     showErrorMessage(error.message);

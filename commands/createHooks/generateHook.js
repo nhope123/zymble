@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const vscode = require('vscode');
 const {
   createFilesWithContent,
   findDirectory,
@@ -10,6 +9,7 @@ const {
   showErrorMessage,
   showQuickPick,
   processContextMenuPath,
+  showInformationMessage,
 } = require('../vscodeHelpers.js');
 const generateHookFiles = require('./hookTemplateUtils.js');
 
@@ -77,7 +77,7 @@ const generateHook = async (uri) => {
     // Create each file with its corresponding content
     createFilesWithContent(componentFolderPath, files);
 
-    vscode.window.showInformationMessage(
+    showInformationMessage(
       `Custom hook ${hookName} created successfully!`
     );
   } catch (error) {
