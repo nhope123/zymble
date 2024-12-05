@@ -1,13 +1,13 @@
-import { ConfigurationTarget } from 'vscode';
-
+const fs = require('fs');
 const {
-  getCurrentWorkspaceFolders,
-  loadJsonPackages,
   processErrorMessage,
   showInformationMessage,
   showQuickPick,
-} = require('../vscodeHelpers');
-const fs = require('fs');
+} = require('../vscodeHelper/message');
+const {
+  getCurrentWorkspaceFolders,
+  loadJsonPackages,
+} = require('../vscodeHelper/vscodeHelpers');
 const {
   PRETTIER_CONSTANTS,
   PRETTIER_REGEX,

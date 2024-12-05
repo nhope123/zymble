@@ -10,7 +10,7 @@ const {
   showQuickPick,
   processContextMenuPath,
   showInformationMessage,
-} = require('../vscodeHelpers.js');
+} = require('../vscodeHelper/vscodeHelpers.js');
 const {
   CONFIGURATION_CONSTANTS: { yesNoOptions },
   CONFIRMATION_CHOICES,

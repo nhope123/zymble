@@ -14,6 +14,20 @@ const CONFIGURATION_CONSTANTS = Object.freeze({
     ESM: 'module',
   },
   type: 'type',
+  typescriptExt: {
+    component: '.tsx',
+    componentTest: '.test.tsx',
+    moduleTest: '.test.ts',
+    module: '.ts',
+  },
+  javascriptExt: {
+    component: '.jsx',
+    componentTest: '.test.jsx',
+    moduleTest: '.test.js',
+    module: '.js',
+  },
+  dependencies: 'dependencies',
+  devDependencies: 'devDependencies',
 });
 
 const CONFIRMATION_CHOICES = Object.freeze(

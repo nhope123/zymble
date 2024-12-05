@@ -2,39 +2,16 @@ const path = require('path');
 const vscode = require('vscode');
 const fs = require('fs');
 const {
+  CONFIGURATION_CONSTANTS: { yesNoOptions, packageJson },
   CURRENT_FOLDER_OPTION,
   SELECT_FOLDER_OPTION,
-} = require('../config/configurationConstants');
-
-const showQuickPick = async (items, options, token) => {
-  return await vscode.window.showQuickPick(items, options, token);
-};
-
-const showInputBox = async (options, token) => {
-  return await vscode.window.showInputBox(
-    {
-      validateInput: (value) => (value ? null : 'Input cannot be empty'),
-      ...options,
-    },
-    token
-  );
-};
-
-const showInformationMessage = (message) =>
-  vscode.window.showInformationMessage(message);
-
-const showErrorMessage = async (message) =>
-  await vscode.window.showErrorMessage(message);
-
-// severity: minor | sever
-const processErrorMessage = (message, severity = 'sever') => {
-  if (severity === 'minor') {
-    console.error(message);
-    return;
-  }
-  console.error(message);
-  throw new Error(message);
-};
+  CONFIRMATION_CHOICES,
+} = require('../../config/configurationConstants');
+const {
+  processErrorMessage,
+  showInputBox,
+  showQuickPick,
+} = require('./message');
 
 const getCurrentWorkspaceFolders = () => {
   const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -163,9 +140,12 @@ const createFilesWithContent = (folderPath, files) => {
 
 const getFileType = async () => {
   try {
-    const packageJson = await loadJsonPackages();
+    const packageJsonData = await loadJsonPackages();
 
-    if (packageJson.devDependencies && packageJson.devDependencies.typescript) {
+    if (
+      packageJsonData.devDependencies &&
+      packageJsonData.devDependencies.typescript
+    ) {
       return ['tsx', 'ts'];
     }
   } catch (err) {
@@ -182,31 +162,33 @@ const loadJsonPackages = async () => {
     if (workspaceFolders) {
       const packageJsonPath = path.join(
         workspaceFolders[0].uri.fsPath,
-        'package.json'
+        packageJson
       );
       if (fs.existsSync(packageJsonPath)) {
         return await JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
       }
     }
   } catch (error) {
-    console.error(error.message);
+    processErrorMessage(error.message, 'minor');
   }
   return;
 };
 
 const updateContextMenu = async () => {
   try {
-    const packageJson = await loadJsonPackages();
+    const packageJsonData = await loadJsonPackages();
 
-    if (packageJson) {
-      if (packageJson.dependencies && packageJson.dependencies.react) {
+    if (packageJsonData) {
+      if (packageJsonData.dependencies && packageJsonData.dependencies.react) {
         vscode.commands.executeCommand('setContext', 'isReactProject', true);
       } else {
         vscode.commands.executeCommand('setContext', 'isReactProject', false);
       }
+
+      // TODO: Analyze this logic
       if (
-        packageJson.devDependencies &&
-        !packageJson.devDependencies.prettier
+        packageJsonData.devDependencies &&
+        !packageJsonData.devDependencies.prettier
       ) {
         vscode.commands.executeCommand('setContext', 'noPrettierConfig', true);
       } else {
@@ -214,7 +196,7 @@ const updateContextMenu = async () => {
       }
     }
   } catch (err) {
-    console.error('Failed to update context menu:', err);
+    processErrorMessage(err.message, 'minor');
   }
 };
 
@@ -225,7 +207,7 @@ const processContextMenuPath = (uri) => {
       ? path.dirname(uri.fsPath)
       : uri.fsPath;
   } catch (err) {
-    console.error('Menu context path error: ', err);
+    processErrorMessage(err.message, 'minor');
   }
   return;
 };
@@ -234,12 +216,13 @@ const createDirectory = async (path, name) => {
   try {
     if (fs.existsSync(path)) {
       const overwrite =
-        (await showQuickPick(['Yes', 'No'], {
-          placeholder: `The folder ${name} already exists. Do you want to overwrite it?`,
-        })) === 'Yes';
+        (await showQuickPick(CONFIRMATION_CHOICES, {
+          placeholder: `The folder "${name}" already exists. Do you want to overwrite it?`,
+          title: 'Overwrite Existing Folder',
+        })) === yesNoOptions.yes;
 
       if (!overwrite) {
-        throw new Error('Operation cancelled.');
+        processErrorMessage('Cancel folder override');
       } else {
         fs.rmdirSync(path, { recursive: true });
       }
@@ -247,8 +230,7 @@ const createDirectory = async (path, name) => {
       fs.mkdirSync(path, { recursive: true });
     }
   } catch (error) {
-    console.error(error.message);
-    throw new Error(error.message);
+    processErrorMessage(error.message);
   }
 };
 
@@ -262,9 +244,5 @@ module.exports = {
   getTargetFolder,
   loadJsonPackages,
   processContextMenuPath,
-  processErrorMessage,
-  showErrorMessage,
-  showInformationMessage,
-  showQuickPick,
   updateContextMenu,
 };

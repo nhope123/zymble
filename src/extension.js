@@ -3,7 +3,7 @@
 const vscode = require('vscode');
 const generateComponent = require('./commands/createComponent/generateComponent');
 const generateHook = require('./commands/createHooks/generateHook');
-const { updateContextMenu } = require('./commands/vscodeHelpers');
+const { updateContextMenu } = require('./commands/vscodeHelper/vscodeHelpers');
 const setupPrettierConfig = require('./commands/setupPrettier/setupPrettierConfig');
 
 // This method is called when your extension is activated

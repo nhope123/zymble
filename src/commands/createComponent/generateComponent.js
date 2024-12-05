@@ -6,11 +6,18 @@ const {
   getCurrentWorkspaceFolders,
   getTargetFolder,
   processContextMenuPath,
+} = require('../vscodeHelper/vscodeHelpers');
+const {
   showErrorMessage,
   showInformationMessage,
   showQuickPick,
-} = require('../vscodeHelpers');
+  processErrorMessage,
+} = require('../vscodeHelper/message');
 const { generateComponentFiles } = require('./componentTemplateUtils');
+const {
+  CONFIGURATION_CONSTANTS: { yesNoOptions },
+  CONFIRMATION_CHOICES,
+} = require('../../config/configurationConstants');
 
 const generateComponent = async (uri) => {
   try {
@@ -19,7 +26,7 @@ const generateComponent = async (uri) => {
     // Prompt the user for the component name
     const componentName = await getComponentName(
       {
-        prompt: 'Enter the component alphanumeric name',
+        prompt: 'Enter the component name (alphanumeric only)',
         title: 'Component Name',
       },
       'Component name cannot be empty'
@@ -27,10 +34,10 @@ const generateComponent = async (uri) => {
 
     // Ask if the component should have props
     const hasProps =
-      (await showQuickPick(['Yes', 'No'], {
-        placeholder: 'Does the component have props?',
-        title: 'Component Props',
-      })) === 'Yes';
+      (await showQuickPick(CONFIRMATION_CHOICES, {
+        placeholder: 'Should the component contain props?',
+        title: 'Component Properties',
+      })) === yesNoOptions.yes;
 
     // Get path if command ran from menu context
     const menuContextPath = processContextMenuPath(uri);
@@ -40,10 +47,9 @@ const generateComponent = async (uri) => {
       : await getTargetFolder();
 
     if (!targetFolderPath) {
-      const errorMessage =
-        'Generate component error: target folder path not found!';
-      console.error(errorMessage);
-      throw new Error(errorMessage);
+      processErrorMessage(
+        'Error: Target folder path not found. Operation cancelled.'
+      );
     }
 
     // Create the folder for the new component
@@ -58,7 +64,7 @@ const generateComponent = async (uri) => {
 
     showInformationMessage(`Component ${componentName} created successfully!`);
   } catch (error) {
-    console.error(error.message);
+    processErrorMessage(error.message, 'minor');
     showErrorMessage(error.message);
   }
 };

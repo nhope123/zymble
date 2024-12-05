@@ -1,5 +1,8 @@
-const { capitalize, createFileObject } = require('../generatorHelpers.js');
-const { getFileType } = require('../vscodeHelpers.js');
+const {
+  capitalize,
+  createFileObject,
+} = require('../vscodeHelper/generatorHelpers.js');
+const { getFileType } = require('../vscodeHelper/vscodeHelpers.js');
 
 const createHookSource = (hookName, hasState, hasEffect) => {
   const stateImport =
