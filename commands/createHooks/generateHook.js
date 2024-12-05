@@ -11,6 +11,10 @@ const {
   processContextMenuPath,
   showInformationMessage,
 } = require('../vscodeHelpers.js');
+const {
+  CONFIGURATION_CONSTANTS: { yesNoOptions },
+  CONFIRMATION_CHOICES,
+} = require('../../config/configurationConstants.js');
 const generateHookFiles = require('./hookTemplateUtils.js');
 
 const regex = /^use/i;
@@ -39,16 +43,16 @@ const generateHook = async (uri) => {
     }
 
     const hasUseState =
-      (await showQuickPick(['Yes', 'No'], {
+      (await showQuickPick(CONFIRMATION_CHOICES, {
         placeholder: 'Should the hook have persisted state (useState)?',
         title: 'Hook State Management',
-      })) === 'Yes';
+      })) === yesNoOptions.yes;
 
     const hasUseEffect =
-      (await showQuickPick(['Yes', 'No'], {
+      (await showQuickPick(CONFIRMATION_CHOICES, {
         placeholder: 'Should hook have a useEffect?',
         title: 'Hook Effect',
-      })) === 'Yes';
+      })) === yesNoOptions.yes;
 
     // Get destination folder
     const menuContextPath = processContextMenuPath(uri);

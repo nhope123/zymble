@@ -1,25 +1,14 @@
 const path = require('path');
 const vscode = require('vscode');
 const fs = require('fs');
-
-const SELECT_FOLDER_OPTION = 'Select Folder';
-const CURRENT_FOLDER_OPTION = 'Current Folder';
-
-const getCurrentWorkspaceFolders = () => {
-  const workspaceFolders = vscode.workspace.workspaceFolders;
-
-  if (!workspaceFolders) {
-    throw new Error('Please open a folder first.');
-  }
-  return workspaceFolders;
-};
+const {
+  CURRENT_FOLDER_OPTION,
+  SELECT_FOLDER_OPTION,
+} = require('../config/configurationConstants');
 
 const showQuickPick = async (items, options, token) => {
   return await vscode.window.showQuickPick(items, options, token);
 };
-
-const showErrorMessage = async (message) =>
-  await vscode.window.showErrorMessage(message);
 
 const showInputBox = async (options, token) => {
   return await vscode.window.showInputBox(
@@ -29,6 +18,31 @@ const showInputBox = async (options, token) => {
     },
     token
   );
+};
+
+const showInformationMessage = (message) =>
+  vscode.window.showInformationMessage(message);
+
+const showErrorMessage = async (message) =>
+  await vscode.window.showErrorMessage(message);
+
+// severity: minor | sever
+const processErrorMessage = (message, severity = 'sever') => {
+  if (severity === 'minor') {
+    console.error(message);
+    return;
+  }
+  console.error(message);
+  throw new Error(message);
+};
+
+const getCurrentWorkspaceFolders = () => {
+  const workspaceFolders = vscode.workspace.workspaceFolders;
+
+  if (!workspaceFolders) {
+    processErrorMessage('Please open a folder first.');
+  }
+  return workspaceFolders;
 };
 
 const findDirectory = async (startPath, folderName) => {
@@ -238,12 +252,8 @@ const createDirectory = async (path, name) => {
   }
 };
 
-const showInformationMessage = (message) =>
-  vscode.window.showInformationMessage(message);
-
 module.exports = {
   createDirectory,
-  showInformationMessage,
   createFilesWithContent,
   findDirectory,
   getComponentName,
@@ -252,7 +262,9 @@ module.exports = {
   getTargetFolder,
   loadJsonPackages,
   processContextMenuPath,
+  processErrorMessage,
   showErrorMessage,
+  showInformationMessage,
   showQuickPick,
   updateContextMenu,
 };

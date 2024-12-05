@@ -3,65 +3,47 @@ import { ConfigurationTarget } from 'vscode';
 const {
   getCurrentWorkspaceFolders,
   loadJsonPackages,
-  showQuickPick,
+  processErrorMessage,
   showInformationMessage,
+  showQuickPick,
 } = require('../vscodeHelpers');
 const fs = require('fs');
+const {
+  PRETTIER_CONSTANTS,
+  PRETTIER_REGEX,
+  PRETTIER_PACKAGE_LIST,
+} = require('../../config/prettierConstants');
 
-const PRETTIER_REGEX = /prettier/gi;
-
-const SETUP_STATIC_VALUES = Object.freeze({
-  packageJson: 'package.json',
-  packageLock: 'package.json.lock',
-  packageManagers: Object.freeze({ yarn: 'yarn', npm: 'npm' }),
-  packageYaml: 'package.yaml',
-  prettier: 'prettier',
-  react: 'react',
-  eslint: 'eslint',
-  eslintPluginReact: 'eslint-plugin-react',
-  typescript: 'typescript',
-  yarnLock: 'yarn.lock',
-  yesNoOptions: Object.freeze({ yes: 'Yes', no: 'No' }),
-  prettierConfigFiles: Object.freeze([
-    '.prettierrc.json',
-    '.prettierrc.yaml',
-    'prettier.config.js', // type: both
-    'prettier.config.mjs', // export default - type: module
-    'prettier.config.cjs', // module.exports - type: commonjs
-  ]),
-  jsModuleType: {
-    default: 'commonjs',
-    ESM: 'module',
+const {
+  CONFIGURATION_CONSTANTS: {
+    packageJson,
+    packageLock,
+    packageManagers,
+    packageYaml,
+    react,
+    eslint,
+    eslintPluginReact,
+    typescript,
+    type: C_C_TYPE,
+    jsModuleType,
+    yesNoOptions,
+    yarnLock,
   },
-  type: 'type',
-});
-
-const PRETTIER_CONFIG_PACKAGES = [
-  SETUP_STATIC_VALUES.type,
-  SETUP_STATIC_VALUES.react,
-  SETUP_STATIC_VALUES.typescript,
-  SETUP_STATIC_VALUES.prettier,
-  SETUP_STATIC_VALUES.eslint,
-];
+  CONFIRMATION_CHOICES,
+} = require('../../config/configurationConstants');
 
 const selectPrettierConfigFile = () =>
-  showQuickPick(
-    SETUP_STATIC_VALUES.prettierConfigFiles,
-    {
-      placeholder: 'Choose a Prettier configuration file',
-      title: 'Prettier Configuration Selection'
-    }
-  );
+  showQuickPick(PRETTIER_CONSTANTS.prettierConfigFiles, {
+    placeholder: 'Choose a Prettier configuration file',
+    title: 'Prettier Configuration Selection',
+  });
 
 const promptForConfigOverride = async (configLocation) => {
   const overrideConfig =
-    (await showQuickPick(
-      Object.values(SETUP_STATIC_VALUES.yesNoOptions),
-      {
-        placeholder: `Prettier config already exists at ${configLocation}. Override?`,
-        title: 'Override Configuration'
-      }
-    )) === SETUP_STATIC_VALUES.yesNoOptions.yes;
+    (await showQuickPick(CONFIRMATION_CHOICES, {
+      placeholder: `Prettier config already exists at ${configLocation}. Override?`,
+      title: 'Override Configuration',
+    })) === yesNoOptions.yes;
 
   if (!overrideConfig) {
     processErrorMessage(
@@ -71,28 +53,17 @@ const promptForConfigOverride = async (configLocation) => {
   return true;
 };
 
-// severity: minor | sever
-const processErrorMessage = (message, severity = 'sever') => {
-  if (severity === 'minor') {
-    console.error(message);
-    return;
-  }
-  console.error(message);
-  throw new Error(message);
-};
-
 const setupPrettierConfig = async () => {
   try {
-    const yesNoOptions = Object.values(SETUP_STATIC_VALUES.yesNoOptions);
     let allowConfigOverride = false;
     let configExists;
     let packageInstallationQueue = [];
-    let packageJson;
+    let packageJsonData;
     let packageManager;
     let prettierConfigFileName;
     let isReactProject = false;
     let isTypescriptProject = false;
-    let moduleType = SETUP_STATIC_VALUES.jsModuleType.default;
+    let moduleType = jsModuleType.default;
 
     //     steps:
     // 1. ensure a workspace : error throw
@@ -110,16 +81,16 @@ const setupPrettierConfig = async () => {
           }
           break;
 
-        case i === SETUP_STATIC_VALUES.packageJson:
-        case i === SETUP_STATIC_VALUES.packageYaml:
-          packageJson = loadJsonPackages();
+        case i === packageJson:
+        case i === packageYaml:
+          packageJsonData = loadJsonPackages();
           break;
 
-        case i === SETUP_STATIC_VALUES.yarnLock:
-          packageManager = SETUP_STATIC_VALUES.packageManagers.yarn;
+        case i === yarnLock:
+          packageManager = packageManagers.yarn;
           break;
-        case i === SETUP_STATIC_VALUES.packageLock:
-          packageManager = SETUP_STATIC_VALUES.packageManagers.npm;
+        case i === packageLock:
+          packageManager = packageManagers.npm;
           break;
 
         default:
@@ -127,15 +98,13 @@ const setupPrettierConfig = async () => {
       }
     });
 
-    if (!packageJson || (!packageJson && !packageManager)) {
+    if (!packageJsonData || (!packageJsonData && !packageManager)) {
       const shouldContinueSetup =
-        showQuickPick(
-          yesNoOptions,
-          {
-            placeholder: 'No packages found. Do you want to continue with the setup?',
-            title: 'Package Installation Missing'
-          }
-        ) === SETUP_STATIC_VALUES.yesNoOptions.yes;
+        showQuickPick(CONFIRMATION_CHOICES, {
+          placeholder:
+            'No packages found. Do you want to continue with the setup?',
+          title: 'Package Installation Missing',
+        }) === yesNoOptions.yes;
 
       if (!shouldContinueSetup) {
         processErrorMessage('Cancel setup: no package installation in project');
@@ -151,15 +120,13 @@ const setupPrettierConfig = async () => {
     }
 
     // 4. Check if package manager exist
-    if (!packageManager && packageJson) {
-      const { yarn, npm } = SETUP_STATIC_VALUES.packageManagers;
-      const chosenPackageManager = showQuickPick(
-        [yarn, npm, 'Exit'],
-        {
-          placeholder: 'Project .lock file is missing. Choose a package manager or exit setup.',
-          title: 'Missing Project Lock File'
-        }
-      );
+    if (!packageManager && packageJsonData) {
+      const { yarn, npm } = packageManagers;
+      const chosenPackageManager = showQuickPick([yarn, npm, 'Exit'], {
+        placeholder:
+          'Project .lock file is missing. Choose a package manager or exit setup.',
+        title: 'Missing Project Lock File',
+      });
 
       if ([yarn, npm].includes(chosenPackageManager)) {
         packageManager = chosenPackageManager;
@@ -168,52 +135,48 @@ const setupPrettierConfig = async () => {
       }
     }
 
-    PRETTIER_CONFIG_PACKAGES.forEach(async (i) => {
+    PRETTIER_PACKAGE_LIST.forEach(async (i) => {
       const isDependencyPresent = (key) =>
-        packageJson.dependencies[key] || packageJson.devDependencies[key];
+        packageJsonData.dependencies[key] ||
+        packageJsonData.devDependencies[key];
 
       switch (true) {
-        case i === SETUP_STATIC_VALUES.type && packageJson[i]:
-          moduleType = packageJson[i];
+        case i === C_C_TYPE && packageJsonData[i]:
+          moduleType = packageJsonData[i];
           break;
 
-        case i === SETUP_STATIC_VALUES.react && isDependencyPresent(i):
+        case i === react && isDependencyPresent(i):
           isReactProject = true;
           break;
 
-        case i === SETUP_STATIC_VALUES.typescript && isDependencyPresent(i):
+        case i === typescript && isDependencyPresent(i):
           isTypescriptProject = true;
           break;
 
-        case i === SETUP_STATIC_VALUES.prettier && packageJson[i]:
+        case i === PRETTIER_CONSTANTS.prettier && packageJsonData[i]:
           const packageKey = 'package.json key';
           const isOverrideNeeded = await promptForConfigOverride(packageKey);
           if (isOverrideNeeded) {
             configExists = packageKey;
           }
 
-        case i === SETUP_STATIC_VALUES.prettier && !isDependencyPresent(i):
+        case i === PRETTIER_CONSTANTS.prettier && !isDependencyPresent(i):
           packageInstallationQueue.push(i);
           packageInstallationQueue.push(`@types/${i}`);
           break;
 
-        case i === SETUP_STATIC_VALUES.eslint &&
+        case i === eslint &&
           isDependencyPresent(i) &&
-          !isDependencyPresent(SETUP_STATIC_VALUES.eslintPluginReact) &&
+          !isDependencyPresent(eslintPluginReact) &&
           isReactProject:
           const confirmPluginInstallation =
-            showQuickPick(
-              yesNoOptions,
-              {
-                placeholder: `The ${SETUP_STATIC_VALUES.eslintPluginReact} is not yet installed. Do you want to queue it for installation?`,
-                title: 'Install ESLint Plugin'
-              }
-            ) === SETUP_STATIC_VALUES.yesNoOptions.yes;
+            showQuickPick(CONFIRMATION_CHOICES, {
+              placeholder: `The ${eslintPluginReact} is not yet installed. Do you want to queue it for installation?`,
+              title: 'Install ESLint Plugin',
+            }) === yesNoOptions.yes;
 
           if (confirmPluginInstallation) {
-            packageInstallationQueue.push(
-              SETUP_STATIC_VALUES.eslintPluginReact
-            );
+            packageInstallationQueue.push(eslintPluginReact);
           }
           break;
 
