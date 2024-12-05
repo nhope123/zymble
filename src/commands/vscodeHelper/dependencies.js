@@ -1,8 +1,8 @@
-import { processErrorMessage } from './message';
+const { processErrorMessage } = require('./message');
 
 const evaluatePackageDependencies = (
-  dependencyArray = [],
-  packageJson = {}
+  dependencyArray,
+  packageJson
 ) => {
   try {
     if (
