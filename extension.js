@@ -24,9 +24,11 @@ const activate = (context) => {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand('zymble.addPrettierConfig', setupPrettierConfig)
-  );  
-
+    vscode.commands.registerCommand(
+      'zymble.addPrettierConfig',
+      setupPrettierConfig
+    )
+  );
 };
 
 // This method is called when your extension is deactivated

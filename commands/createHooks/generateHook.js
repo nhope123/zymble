@@ -39,9 +39,16 @@ const generateHook = async (uri) => {
     }
 
     const hasUseState =
-      (await showQuickPick(['Yes', 'No'], 'Should have useState?')) === 'Yes';
+      (await showQuickPick(['Yes', 'No'], {
+        placeholder: 'Should the hook have persisted state (useState)?',
+        title: 'Hook State Management',
+      })) === 'Yes';
+
     const hasUseEffect =
-      (await showQuickPick(['Yes', 'No'], 'Should have useEffect?')) === 'Yes';
+      (await showQuickPick(['Yes', 'No'], {
+        placeholder: 'Should hook have a useEffect?',
+        title: 'Hook Effect',
+      })) === 'Yes';
 
     // Get destination folder
     const menuContextPath = processContextMenuPath(uri);
@@ -77,9 +84,7 @@ const generateHook = async (uri) => {
     // Create each file with its corresponding content
     createFilesWithContent(componentFolderPath, files);
 
-    showInformationMessage(
-      `Custom hook ${hookName} created successfully!`
-    );
+    showInformationMessage(`Custom hook ${hookName} created successfully!`);
   } catch (error) {
     showErrorMessage(error.message);
   }

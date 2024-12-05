@@ -14,8 +14,8 @@ const getCurrentWorkspaceFolders = () => {
   return workspaceFolders;
 };
 
-const showQuickPick = async (options, placeHolder) => {
-  return await vscode.window.showQuickPick(options, { placeHolder });
+const showQuickPick = async (items, options, token) => {
+  return await vscode.window.showQuickPick(items, options, token);
 };
 
 const showErrorMessage = async (message) =>
@@ -93,10 +93,9 @@ const getTargetFolder = async (options) => {
   }
 
   // Let the user select a folder or use the active folder
-  const selectedFolder = await showQuickPick(
-    folderOptions,
-    'Select the target folder'
-  );
+  const selectedFolder = await showQuickPick(folderOptions, {
+    placeholder: 'Select the target folder',
+  });
 
   let targetFolderPath = workspaceFolder[0].uri.fsPath; // Default to root folder
 
@@ -150,24 +149,10 @@ const createFilesWithContent = (folderPath, files) => {
 
 const getFileType = async () => {
   try {
-    const workspaceFolders = getCurrentWorkspaceFolders();
+    const packageJson = await loadJsonPackages();
 
-    if (workspaceFolders) {
-      const packageJsonPath = path.join(
-        workspaceFolders[0].uri.fsPath,
-        'package.json'
-      );
-      if (fs.existsSync(packageJsonPath)) {
-        const packageJson = JSON.parse(
-          fs.readFileSync(packageJsonPath, 'utf8')
-        );
-        if (
-          packageJson.devDependencies &&
-          packageJson.devDependencies.typescript
-        ) {
-          return ['tsx', 'ts'];
-        }
-      }
+    if (packageJson.devDependencies && packageJson.devDependencies.typescript) {
+      return ['tsx', 'ts'];
     }
   } catch (err) {
     console.error('Failed to update context menu:', err);
@@ -235,10 +220,9 @@ const createDirectory = async (path, name) => {
   try {
     if (fs.existsSync(path)) {
       const overwrite =
-        (await showQuickPick(
-          ['Yes', 'No'],
-          `The folder ${name} already exists. Do you want to overwrite it?`
-        )) === 'Yes';
+        (await showQuickPick(['Yes', 'No'], {
+          placeholder: `The folder ${name} already exists. Do you want to overwrite it?`,
+        })) === 'Yes';
 
       if (!overwrite) {
         throw new Error('Operation cancelled.');
@@ -254,8 +238,8 @@ const createDirectory = async (path, name) => {
   }
 };
 
-const showInformationMessage = (message) => 
-  vscode.window.showInformationMessage(message); 
+const showInformationMessage = (message) =>
+  vscode.window.showInformationMessage(message);
 
 module.exports = {
   createDirectory,

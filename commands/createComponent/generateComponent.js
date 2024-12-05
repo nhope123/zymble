@@ -27,8 +27,10 @@ const generateComponent = async (uri) => {
 
     // Ask if the component should have props
     const hasProps =
-      (await showQuickPick(['Yes', 'No'], 'Does the component have props?')) ===
-      'Yes';
+      (await showQuickPick(['Yes', 'No'], {
+        placeholder: 'Does the component have props?',
+        title: 'Component Props',
+      })) === 'Yes';
 
     // Get path if command ran from menu context
     const menuContextPath = processContextMenuPath(uri);

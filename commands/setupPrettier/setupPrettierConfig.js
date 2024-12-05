@@ -1,3 +1,5 @@
+import { ConfigurationTarget } from 'vscode';
+
 const {
   getCurrentWorkspaceFolders,
   loadJsonPackages,
@@ -21,57 +23,65 @@ const SETUP_STATIC_VALUES = Object.freeze({
   yarnLock: 'yarn.lock',
   yesNoOptions: Object.freeze({ yes: 'Yes', no: 'No' }),
   prettierConfigFiles: Object.freeze([
-    '.prettierrc.json', 
-    '.prettierrc.yaml', 
+    '.prettierrc.json',
+    '.prettierrc.yaml',
     'prettier.config.js', // type: both
     'prettier.config.mjs', // export default - type: module
     'prettier.config.cjs', // module.exports - type: commonjs
   ]),
   jsModuleType: {
     default: 'commonjs',
-    ESM: "module"
+    ESM: 'module',
   },
   type: 'type',
 });
-
 
 const PRETTIER_CONFIG_PACKAGES = [
   SETUP_STATIC_VALUES.type,
   SETUP_STATIC_VALUES.react,
   SETUP_STATIC_VALUES.typescript,
-  SETUP_STATIC_VALUES.prettier,  
+  SETUP_STATIC_VALUES.prettier,
   SETUP_STATIC_VALUES.eslint,
 ];
 
-const selectPrettierConfigFile = () => showQuickPick(
-  SETUP_STATIC_VALUES.prettierConfigFiles,
-  'Select your project config file choice.'
-);
+const selectPrettierConfigFile = () =>
+  showQuickPick(
+    SETUP_STATIC_VALUES.prettierConfigFiles,
+    {
+      placeholder: 'Choose a Prettier configuration file',
+      title: 'Prettier Configuration Selection'
+    }
+  );
 
 const promptForConfigOverride = async (configLocation) => {
-  const overrideConfig = await showQuickPick(
-    Object.values(SETUP_STATIC_VALUES.yesNoOptions),
-    `Prettier Config already exist in ${configLocation}, do you want to override?`
-  ) === SETUP_STATIC_VALUES.yesNoOptions.yes;
+  const overrideConfig =
+    (await showQuickPick(
+      Object.values(SETUP_STATIC_VALUES.yesNoOptions),
+      {
+        placeholder: `Prettier config already exists at ${configLocation}. Override?`,
+        title: 'Override Configuration'
+      }
+    )) === SETUP_STATIC_VALUES.yesNoOptions.yes;
 
   if (!overrideConfig) {
-    processErrorMessage(`Cancel setup: ${configLocation} config already exist!`);
+    processErrorMessage(
+      `Cancel setup: ${configLocation} config already exist!`
+    );
   }
   return true;
-}
+};
 
 // severity: minor | sever
 const processErrorMessage = (message, severity = 'sever') => {
   if (severity === 'minor') {
     console.error(message);
     return;
-  } 
+  }
   console.error(message);
-  throw new Error(message);  
-}
+  throw new Error(message);
+};
 
 const setupPrettierConfig = async () => {
-
   try {
     const yesNoOptions = Object.values(SETUP_STATIC_VALUES.yesNoOptions);
     let allowConfigOverride = false;
@@ -89,7 +99,7 @@ const setupPrettierConfig = async () => {
     const workspace = getCurrentWorkspaceFolders();
 
     // 2. get workspace dirs.
-    const workspaceFolders = fs.readdirSync(workspace[0].uri.fsPath);  
+    const workspaceFolders = fs.readdirSync(workspace[0].uri.fsPath);
 
     workspaceFolders.forEach(async (i) => {
       switch (true) {
@@ -99,9 +109,9 @@ const setupPrettierConfig = async () => {
             configExists = i;
           }
           break;
-          
+
         case i === SETUP_STATIC_VALUES.packageJson:
-        case i === SETUP_STATIC_VALUES.packageYaml:  
+        case i === SETUP_STATIC_VALUES.packageYaml:
           packageJson = loadJsonPackages();
           break;
 
@@ -115,15 +125,18 @@ const setupPrettierConfig = async () => {
         default:
           break;
       }
-    })
+    });
 
-      
     if (!packageJson || (!packageJson && !packageManager)) {
-      const shouldContinueSetup = showQuickPick(
-        yesNoOptions,
-        'No package installation found, do you want to continue setup?'
-      ) === SETUP_STATIC_VALUES.yesNoOptions.yes;
-      
+      const shouldContinueSetup =
+        showQuickPick(
+          yesNoOptions,
+          {
+            placeholder: 'No packages found. Do you want to continue with the setup?',
+            title: 'Package Installation Missing'
+          }
+        ) === SETUP_STATIC_VALUES.yesNoOptions.yes;
+
       if (!shouldContinueSetup) {
         processErrorMessage('Cancel setup: no package installation in project');
       } else {
@@ -135,31 +148,31 @@ const setupPrettierConfig = async () => {
         4. create file and add content
         5. inform user of success
       */
-
     }
 
-    // 4. Check if package manager exist    
-    if (!packageManager && packageJson)  {
-      const {yarn, npm} = SETUP_STATIC_VALUES.packageManagers;      
+    // 4. Check if package manager exist
+    if (!packageManager && packageJson) {
+      const { yarn, npm } = SETUP_STATIC_VALUES.packageManagers;
       const chosenPackageManager = showQuickPick(
         [yarn, npm, 'Exit'],
-        'Missing project .lock file. Choose Package Manager or exit setup'      
+        {
+          placeholder: 'Project .lock file is missing. Choose a package manager or exit setup.',
+          title: 'Missing Project Lock File'
+        }
       );
 
       if ([yarn, npm].includes(chosenPackageManager)) {
         packageManager = chosenPackageManager;
       } else {
-        processErrorMessage("Cancelled process: no package manager.");
-      }            
+        processErrorMessage('Cancelled process: no package manager.');
+      }
     }
 
-
     PRETTIER_CONFIG_PACKAGES.forEach(async (i) => {
-      const isDependencyPresent = (key) => 
-        (packageJson.dependencies[key] || packageJson.devDependencies[key]);
-        
-      switch (true) {
+      const isDependencyPresent = (key) =>
+        packageJson.dependencies[key] || packageJson.devDependencies[key];
 
+      switch (true) {
         case i === SETUP_STATIC_VALUES.type && packageJson[i]:
           moduleType = packageJson[i];
           break;
@@ -178,22 +191,31 @@ const setupPrettierConfig = async () => {
           if (isOverrideNeeded) {
             configExists = packageKey;
           }
-          
-        case i === SETUP_STATIC_VALUES.prettier && !isDependencyPresent(i):    
+
+        case i === SETUP_STATIC_VALUES.prettier && !isDependencyPresent(i):
           packageInstallationQueue.push(i);
           packageInstallationQueue.push(`@types/${i}`);
-          break;  
-        
-        case i === SETUP_STATIC_VALUES.eslint && isDependencyPresent(i) && !isDependencyPresent(SETUP_STATIC_VALUES.eslintPluginReact) && isReactProject:
-          const confirmPluginInstallation = showQuickPick(
-            yesNoOptions,
-            `The ${SETUP_STATIC_VALUES.eslintPluginReact} is not yet install, do you want to queue for installation?`
-          ) === SETUP_STATIC_VALUES.yesNoOptions.yes;
+          break;
 
-          if(confirmPluginInstallation) {
-            packageInstallationQueue.push(SETUP_STATIC_VALUES.eslintPluginReact);
-          }          
-          break; 
+        case i === SETUP_STATIC_VALUES.eslint &&
+          isDependencyPresent(i) &&
+          !isDependencyPresent(SETUP_STATIC_VALUES.eslintPluginReact) &&
+          isReactProject:
+          const confirmPluginInstallation =
+            showQuickPick(
+              yesNoOptions,
+              {
+                placeholder: `The ${SETUP_STATIC_VALUES.eslintPluginReact} is not yet installed. Do you want to queue it for installation?`,
+                title: 'Install ESLint Plugin'
+              }
+            ) === SETUP_STATIC_VALUES.yesNoOptions.yes;
+
+          if (confirmPluginInstallation) {
+            packageInstallationQueue.push(
+              SETUP_STATIC_VALUES.eslintPluginReact
+            );
+          }
+          break;
 
         default:
           break;
@@ -203,10 +225,7 @@ const setupPrettierConfig = async () => {
     if (!prettierConfigFileName) {
       prettierConfigFileName = selectPrettierConfigFile();
     }
-    
-    
-    
-    
+
     // 9. check module type for file format and file extension
     // 	if default use module format
     // 	else ask which file format (Json, Yaml, default export)
@@ -215,19 +234,10 @@ const setupPrettierConfig = async () => {
     // 12. install packages
     // 13. create files
     // 14. confirm file exist and inform user
-    showInformationMessage('Prettier config setup success!')
-    
+    showInformationMessage('Prettier config setup success!');
   } catch (error) {
     processErrorMessage(error.message);
   }
-
-
-
-
-
-
-
-
 };
 
 module.exports = setupPrettierConfig;
