@@ -1,5 +1,3 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
 const generateComponent = require('./commands/createComponent/generateComponent');
 const generateHook = require('./commands/createHooks/generateHook');
@@ -13,8 +11,6 @@ const setupPrettierConfig = require('./commands/setupPrettier/setupPrettierConfi
  * @param {vscode.ExtensionContext} context
  */
 const activate = (context) => {
-  console.log('Shadow garden: ', vscode.workspace.getWorkspaceFolder());
-
   updateContextMenu();
 
   context.subscriptions.push(

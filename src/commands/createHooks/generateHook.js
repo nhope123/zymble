@@ -1,3 +1,5 @@
+const { processErrorMessage } = require('../vscodeHelper/message.js');
+const vscode = require('vscode');
 const fs = require('fs');
 const path = require('path');
 const {
@@ -5,7 +7,6 @@ const {
   findDirectory,
   getComponentName,
   getTargetFolder,
-  showErrorMessage,
   showQuickPick,
   processContextMenuPath,
   showInformationMessage,
@@ -92,7 +93,8 @@ const generateHook = async (uri) => {
 
     showInformationMessage(`Custom hook ${hookName} created successfully!`);
   } catch (error) {
-    showErrorMessage(error.message);
+    processErrorMessage(error.message, 'minor');
+    vscode.window.showErrorMessage(error.message);
   }
 };
 

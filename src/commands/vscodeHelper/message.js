@@ -16,9 +16,6 @@ const processErrorMessage = (message, severity = 'sever') => {
   throw new Error(message);
 };
 
-const showErrorMessage = async (message) =>
-  await vscode.window.showErrorMessage(message);
-
 const showInformationMessage = (message) =>
   vscode.window.showInformationMessage(message);
 
@@ -38,7 +35,6 @@ const showQuickPick = async (items, options, token) => {
 
 module.exports = {
   processErrorMessage,
-  showErrorMessage,
   showInformationMessage,
   showInputBox,
   showQuickPick,

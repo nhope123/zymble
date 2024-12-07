@@ -7,24 +7,26 @@
   "publisher": "nye",
   "repository": "https://github.com/nhope123/zymble.git",
   "icon": "src/assets/logo.png",
+  "galleryBanner": {
+    "color": "#1E90FF",
+    "theme": "dark"
+  },
   "keywords": [
     "react",
-    "vite",
-    "typescript",
-    "mui",
-    "i18n",
-    "Workflow",
-    "Simplified",
-    "Prettier",
-    "Formatting",
-    "Format",
-    "config"
+    "prettier",
+    "formatting",
+    "hooks",
+    "components"
   ],
   "engines": {
     "vscode": "^1.95.0"
   },
   "categories": [
-    "Programming Languages"
+    "Programming Languages",
+    "Formatters",
+    "Snippets",
+    "Linters",
+    "Other"
   ],
   "activationEvents": [
     "workspaceContains:package.json"
@@ -70,7 +72,7 @@
   },
   "scripts": {
     "prepack": "yarn lint && yarn format",
-    "package": "vsce package --no-yarn",
+    "package": "vsce package --no-yarn --baseContentUrl",
     "format": "prettier --write .",
     "check-format": "prettier --check .",
     "lint": "eslint .",

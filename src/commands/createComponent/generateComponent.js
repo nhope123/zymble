@@ -7,7 +7,6 @@ const {
   processContextMenuPath,
 } = require('../vscodeHelper/vscodeHelpers');
 const {
-  showErrorMessage,
   showInformationMessage,
   showQuickPick,
   processErrorMessage,
@@ -20,8 +19,10 @@ const {
 const {
   getCurrentWorkspaceFolders,
 } = require('../vscodeHelper/fileOperations');
+const vscode = require('vscode');
 
 const generateComponent = async (uri) => {
+
   try {
     getCurrentWorkspaceFolders();
 
@@ -44,7 +45,7 @@ const generateComponent = async (uri) => {
     // Get path if command ran from menu context
     const menuContextPath = processContextMenuPath(uri);
     // Get target folder
-    let targetFolderPath = menuContextPath
+    const targetFolderPath = menuContextPath
       ? menuContextPath
       : await getTargetFolder();
 
@@ -67,7 +68,7 @@ const generateComponent = async (uri) => {
     showInformationMessage(`Component ${componentName} created successfully!`);
   } catch (error) {
     processErrorMessage(error.message, 'minor');
-    showErrorMessage(error.message);
+    vscode.window.showErrorMessage(error.message);
   }
 };
 

@@ -53,8 +53,11 @@ const promptForConfigOverride = async (configLocation) => {
   return true;
 };
 
-const setupPrettierConfig = async () => {
+const setupPrettierConfig = async (args) => {
   try {
+
+    const values = [...args];
+
     let allowConfigOverride = false;
     let configExists;
     let packageInstallationQueue = [];

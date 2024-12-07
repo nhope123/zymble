@@ -27,8 +27,7 @@ const createFileObject = (name, extension, content) => {
  * @throws Will call processErrorMessage if no folders are open.
  */
 const getCurrentWorkspaceFolders = () => {
-  // console.log('shadow garden: ', vscode.workspace.getWorkspaceFolder());
-
+  
   const workspaceFolders = vscode.workspace.workspaceFolders;
 
   if (!workspaceFolders) {

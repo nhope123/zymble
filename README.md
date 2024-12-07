@@ -1,6 +1,6 @@
 <h1 style="color: #1F77FF;font-style: italic; ">  
   <!-- <img style="width: 90px; height: 90px;" src="https://github.com/nhope123/zymble/blob/main/src/assets/logo.png" alt="Logo" /> -->
-  <img style="width: 90px; height: 90px;" src="src/assets/logo.png" alt="Logo" />
+  <img src="/src/assets/logo.png" alt="Logo" />
   Zymble 
 </h1>
 
