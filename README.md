@@ -1,19 +1,34 @@
-<!-- <h1 style="color: #045CB4;font-style: italic; ">  
-  <!-- <img style="width: 90px; height: 90px;" src="https://github.com/nhope123/zymble/blob/main/src/assets/logo.png" alt="Logo" /> 
-  <img src="src/assets/logo.png" alt="Logo" />
-  Zymble 
-</h1> -->
 # Zymble ![Zymble Logo](src/assets/logo.png)
 
 ## Description
 
 Zymble is a VS Code extension that simplifies the React workflow by providing commands to generate React components and hooks with ease.
 
+## Commands
+- **Create React Component**
+- **Create React Hook**
+
 ## Features
 
-- Generate React functional components with or without props.
-- Generate custom React hooks with optional state and effect.
-- Seamless integration with VS Code.
+- **Create React Component**: 
+  - Generate a folder from the component name.
+  - Generate a React functional components with or without props. 
+  - Generate a component test file.
+  - Generate a types file for components with props.
+  - The file extensions depending on TypeScript installation:
+    - Component and test files are `.jsx` or `.tsx`.
+    - Type files are `.js` or `.ts`.
+
+- **Create React Hook** 
+  - Generate a folder from the hook name in the hooks folder or a User selected folder.
+  - Generate custom React hooks with optional useState and useEffect.
+  - Generate a hook test file.
+  - Generate a types file for a Typescript hook.
+  - The file extensions depending on TypeScript installation:
+    - Hook and test files are `.jsx` or `.tsx`.
+    - Type files are `.js` or `.ts`.
+
+- **Seamless integration with VS Code**
 
 ## Screenshots
 
@@ -23,7 +38,17 @@ Zymble is a VS Code extension that simplifies the React workflow by providing co
 ## Instructions
 
 ### Download installation file
-1. 
+1. Open the [package folder](https://github.com/nhope123/zymble/tree/main/packages) and select the `zymble<version>.vsix`.
+2. Download and save the raw file to your local directory.
+
+### Install Extension
+1. Open `vscode`
+2. Open the Extensions view by clicking on the Extensions icon in the Activity Bar on the side of the window.
+3. Click the `Views and more Actions` menu to the right of the Extension refresh button.
+4. At the bottom, click the `Install from VSIX`
+5. Locate and select the `zymble-<version>` installation file
+6. Click install
+7. View the extension by Typing `zymble` in the extension search
 
 ### Cloning the Repository
 
@@ -50,23 +75,19 @@ yarn install
    - Right-click on the workspace folder in the Explorer view.
    - If the project is a React or Prettier project, the context menu will show options based on the isReactProject and noPrettierConfig contexts set by the commands.
 
-### Installing the Extension from repository
+### Package the Extension
 
 1. Run `yarn package`
-2. Open the Extensions view by clicking on the Extensions icon in the Activity Bar on the side of the window.
-3. Click the `Views and more Actions` menu to the right of the Extension refresh button.
-4. At the bottom, click the `Install from VSIX`
-5. Locate the `zymble-<version>`
-6. Type `zymble` in the extension search
+2. Locate extension file in `packages/` folder.
 
-## Extension Settings
+<!-- ## Extension Settings
 
 This extension contributes the following settings:
 
 - `zymble.enable`: Enable/disable this extension.
-- `zymble.someSetting`: Description of what this setting does.
+- `zymble.someSetting`: Description of what this setting does. -->
 
-## Release Notes
+<!-- ## Release Notes
 
 ### 1.0.0
 
@@ -80,24 +101,8 @@ This extension contributes the following settings:
 
 - Added features X, Y, and Z.
 
----
+--- -->
 
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-- Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-- Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-- Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets
-
-## For more information
-
-- [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-- [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+[MIT License](https://github.com/nhope123/zymble/blob/main/LICENSE.md)
 
 **Enjoy!**
-
-```
-
-Make sure to replace placeholders like `yourusername` and `images/logo.png` with actual values relevant to your project.
-```
