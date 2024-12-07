@@ -1,10 +1,10 @@
 {
-	"folders": [
-		{
-			"path": "."
-		},
-		{
-			"path": "../react-wizardry/src/commands"
-		}
-	]
+  "folders": [
+    {
+      "path": ".",
+    },
+    {
+      "path": "../react-wizardry/src/commands",
+    },
+  ],
 }

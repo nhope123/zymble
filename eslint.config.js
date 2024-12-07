@@ -1,30 +1,30 @@
-module.exports = {
-  // env: {
-  //   browser: false,
-  //   commonjs: true,
-  //   es6: true,
-  //   node: true,
-  //   mocha: true,
-  // },
-  languageOptions: {
-    // parserOptions: {
-      ecmaVersion: 2018,
-      sourceType: 'script', // Set to 'script' for CommonJS
-    // }
+const config = [
+  {
+    name: 'zymble-extension',
+    files: ['src/**/*.js'],
+    ignores: [
+      'node_modules/*',
+      '.vscode/',
+      '.vscode-test/',
+      'eslint.config.js',
+    ],
+    languageOptions: {
+      sourceType: 'commonjs',
+    },
+    rules: {
+      // 'no-undef': 'error',
+      'no-unused-vars': 'warn',
+      'no-console': ['warn', { allow: ['error'] }],
+      'no-redeclare': 'error',
+      'no-var': 'error',
+      'prefer-const': 'warn',
+      'no-path-concat': 'error',
+      'global-require': 'error',
+      'no-new-require': 'error',
+      'callback-return': 'warn',
+      semi: 'warn',
+    },
   },
-  
-  rules: {
-    'no-const-assign': 'warn',
-    'no-this-before-super': 'warn',
-    'no-undef': 'warn',
-    'no-unreachable': 'warn',
-    'no-unused-vars': 'warn',
-    'constructor-super': 'warn',
-    'valid-typeof': 'warn',
-  },
-  ignores: [
-    '.vscode',
-    '.vscode-test',
-    'node_modules',
-  ]
-};
+];
+
+module.exports = config;

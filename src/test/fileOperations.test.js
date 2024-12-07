@@ -1,4 +1,4 @@
-// const { afterEach, beforeEach } = require('mocha');
+const { suite, test } = require('mocha');
 
 const {
   createFileObject,

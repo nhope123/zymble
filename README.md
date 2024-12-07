@@ -1,5 +1,6 @@
 <h1 style="color: #1F77FF;font-style: italic; ">  
-  <img style="width: 90px; height: 90px;" src="assets/zymble-logo-bg.png" alt="Logo" />
+  <!-- <img style="width: 90px; height: 90px;" src="https://github.com/nhope123/zymble/blob/main/src/assets/logo.png" alt="Logo" /> -->
+  <img style="width: 90px; height: 90px;" src="src/assets/logo.png" alt="Logo" />
   Zymble 
 </h1>
 
@@ -15,8 +16,8 @@ Zymble is a VS Code extension that simplifies the React workflow by providing co
 
 ## Screenshots
 
-![Generate Component](images/generate-component.png)
-![Generate Hook](images/generate-hook.png)
+<!-- ![Generate Component](images/generate-component.png)
+![Generate Hook](images/generate-hook.png) -->
 
 ## Instructions
 

@@ -2,12 +2,11 @@
   "name": "zymble",
   "displayName": "Zymble",
   "description": "React Workflow Simplified!",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "license": "MIT",
   "publisher": "nye",
   "repository": "https://github.com/nhope123/zymble.git",
-  "icon": "assets/logo.png",
-  "type": "commonjs",
+  "icon": "src/assets/logo.png",
   "keywords": [
     "react",
     "vite",
@@ -70,6 +69,8 @@
     }
   },
   "scripts": {
+    "prepack": "yarn lint && yarn format",
+    "package": "vsce package --no-yarn",
     "format": "prettier --write .",
     "check-format": "prettier --check .",
     "lint": "eslint .",
@@ -77,6 +78,7 @@
     "test": "node --force-node-api-uncaught-exceptions-policy=true ./node_modules/@vscode/test-electron/out/runTest.js"
   },
   "devDependencies": {
+    "@eslint/js": "^9.16.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.10.1",
     "@types/vscode": "^1.95.0",
@@ -88,7 +90,6 @@
     "mocha": "^11.0.1",
     "prettier": "^3.4.2",
     "sharp": "^0.33.5",
-    "typescript": "^5.7.2",
     "vscode-test": "^1.6.1"
   }
 }
