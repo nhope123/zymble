@@ -1,13 +1,11 @@
-const { processErrorMessage } = require('../vscodeHelper/message.js');
+const { processErrorMessage, showQuickPick } = require('../vscodeHelper/message.js');
 const vscode = require('vscode');
 const fs = require('fs');
 const path = require('path');
 const {
   createFilesWithContent,
   findDirectory,
-  getComponentName,
-  getTargetFolder,
-  showQuickPick,
+  getComponentName,  
   processContextMenuPath,
   showInformationMessage,
 } = require('../vscodeHelper/vscodeHelpers.js');
@@ -18,6 +16,7 @@ const {
 const generateHookFiles = require('./hookTemplateUtils.js');
 const {
   getCurrentWorkspaceFolders,
+  getTargetFolder,
 } = require('../vscodeHelper/fileOperations');
 
 const regex = /^use/i;

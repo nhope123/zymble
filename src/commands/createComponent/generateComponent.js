@@ -3,7 +3,6 @@ const {
   createDirectory,
   createFilesWithContent,
   getComponentName,
-  getTargetFolder,
   processContextMenuPath,
 } = require('../vscodeHelper/vscodeHelpers');
 const {
@@ -18,6 +17,7 @@ const {
 } = require('../../config/configurationConstants');
 const {
   getCurrentWorkspaceFolders,
+  getTargetFolder,
 } = require('../vscodeHelper/fileOperations');
 const vscode = require('vscode');
 
@@ -54,6 +54,8 @@ const generateComponent = async (uri) => {
         'Error: Target folder path not found. Operation cancelled.'
       );
     }
+
+   
 
     // Create the folder for the new component
     const componentFolderPath = path.join(targetFolderPath, componentName);

@@ -59,65 +59,6 @@ const getComponentName = async (options, errorMessage) => {
   throw new Error(errorMessage);
 };
 
-const getTargetFolder = async (options) => {
-  const workspaceFolder = getCurrentWorkspaceFolders();
-
-  // Get active window
-  let activeFilePath = '';
-  const activeEditor = vscode.window.activeTextEditor;
-  if (activeEditor) {
-    activeFilePath = activeEditor.document.uri.fsPath;
-  }
-
-  let folderOptions = [SELECT_FOLDER_OPTION];
-  if (activeFilePath) {
-    folderOptions.unshift(CURRENT_FOLDER_OPTION);
-  }
-  if (options) {
-    folderOptions = [...options.map((i) => i.option), ...folderOptions];
-  }
-
-  // Let the user select a folder or use the active folder
-  const selectedFolder = await showQuickPick(folderOptions, {
-    placeholder: 'Select the target folder',
-  });
-
-  let targetFolderPath = workspaceFolder[0].uri.fsPath; // Default to root folder
-
-  if (selectedFolder === CURRENT_FOLDER_OPTION) {
-    const activeEditor = vscode.window.activeTextEditor;
-    if (activeEditor) {
-      const activeFilePath = activeEditor.document.uri.fsPath;
-      targetFolderPath = path.dirname(activeFilePath);
-    }
-  } else if (selectedFolder === SELECT_FOLDER_OPTION) {
-    const folderUri = await vscode.window.showOpenDialog({
-      canSelectFolders: true,
-      canSelectFiles: false,
-      canSelectMany: false,
-      openLabel: 'Select a folder',
-    });
-
-    if (folderUri && folderUri[0]) {
-      targetFolderPath = folderUri[0].fsPath;
-    } else {
-      vscode.window.showErrorMessage(
-        'No folder selected. Operation cancelled.'
-      );
-      return;
-    }
-  } else if (options) {
-    const selectedOptionPath = options.filter(
-      (i) => i.option === selectedFolder
-    )[0].path;
-    if (selectedOptionPath) {
-      targetFolderPath = selectedOptionPath;
-    }
-  }
-
-  return targetFolderPath;
-};
-
 const createFilesWithContent = (folderPath, files) => {
   try {
     // Create each file with its corresponding content
@@ -236,7 +177,6 @@ module.exports = {
   getComponentName,
   getCurrentWorkspaceFolders,
   getFileType,
-  getTargetFolder,
   loadJsonPackages,
   processContextMenuPath,
   updateContextMenu,
