@@ -5,7 +5,7 @@
   "version": "1.1.2",
   "license": "MIT",
   "publisher": "nye",
-  "repository": "https://github.com/nhope123/zymble.git",
+  "repository": "https://github.com/nhope123/zymble",
   "icon": "src/assets/logo.png",
   "galleryBanner": {
     "color": "#1E90FF",
