@@ -6,9 +6,10 @@
   "license": "MIT",
   "publisher": "nye",
   "repository": "https://github.com/nhope123/zymble",
+  "homepage": "https://github.com/nhope123/zymble/blob/main/README.md",
   "icon": "src/assets/logo.png",
   "galleryBanner": {
-    "color": "#1E90FF",
+    "color": "#EBE5E5",
     "theme": "dark"
   },
   "keywords": [
@@ -28,6 +29,16 @@
     "Linters",
     "Other"
   ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true,
+      "description": "This extension can run in untrusted workspaces."
+    },
+    "virtualWorkspaces": {
+      "supported": true,
+      "description": "This extension can run in virtual workspaces."
+    }
+  },
   "activationEvents": [
     "workspaceContains:package.json"
   ],
@@ -72,7 +83,7 @@
   },
   "scripts": {
     "prepack": "yarn lint && yarn format",
-    "package": "vsce package --no-yarn --baseContentUrl",
+    "package": "vsce package --no-yarn",
     "format": "prettier --write .",
     "check-format": "prettier --check .",
     "lint": "eslint .",
