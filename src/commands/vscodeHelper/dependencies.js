@@ -1,9 +1,6 @@
 const { processErrorMessage } = require('./message');
 
-const evaluatePackageDependencies = (
-  dependencyArray,
-  packageJson
-) => {
+const evaluatePackageDependencies = (dependencyArray, packageJson) => {
   try {
     if (
       !packageJson ||

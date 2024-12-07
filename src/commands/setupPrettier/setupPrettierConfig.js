@@ -4,15 +4,15 @@ const {
   showInformationMessage,
   showQuickPick,
 } = require('../vscodeHelper/message');
-const {
-  getCurrentWorkspaceFolders,
-  loadJsonPackages,
-} = require('../vscodeHelper/vscodeHelpers');
+const { loadJsonPackages } = require('../vscodeHelper/vscodeHelpers');
 const {
   PRETTIER_CONSTANTS,
   PRETTIER_REGEX,
   PRETTIER_PACKAGE_LIST,
 } = require('../../config/prettierConstants');
+const {
+  getCurrentWorkspaceFolders,
+} = require('../vscodeHelper/fileOperations');
 
 const {
   CONFIGURATION_CONSTANTS: {

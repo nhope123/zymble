@@ -4,7 +4,6 @@ const {
   createFilesWithContent,
   findDirectory,
   getComponentName,
-  getCurrentWorkspaceFolders,
   getTargetFolder,
   showErrorMessage,
   showQuickPick,
@@ -16,6 +15,9 @@ const {
   CONFIRMATION_CHOICES,
 } = require('../../config/configurationConstants.js');
 const generateHookFiles = require('./hookTemplateUtils.js');
+const {
+  getCurrentWorkspaceFolders,
+} = require('../vscodeHelper/fileOperations');
 
 const regex = /^use/i;
 

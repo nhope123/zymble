@@ -3,7 +3,6 @@ const {
   createDirectory,
   createFilesWithContent,
   getComponentName,
-  getCurrentWorkspaceFolders,
   getTargetFolder,
   processContextMenuPath,
 } = require('../vscodeHelper/vscodeHelpers');
@@ -18,6 +17,9 @@ const {
   CONFIGURATION_CONSTANTS: { yesNoOptions },
   CONFIRMATION_CHOICES,
 } = require('../../config/configurationConstants');
+const {
+  getCurrentWorkspaceFolders,
+} = require('../vscodeHelper/fileOperations');
 
 const generateComponent = async (uri) => {
   try {

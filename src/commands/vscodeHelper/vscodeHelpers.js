@@ -12,15 +12,9 @@ const {
   showInputBox,
   showQuickPick,
 } = require('./message');
+const { getCurrentWorkspaceFolders } = require('./fileOperations');
 
-const getCurrentWorkspaceFolders = () => {
-  const workspaceFolders = vscode.workspace.workspaceFolders;
-
-  if (!workspaceFolders) {
-    processErrorMessage('Please open a folder first.');
-  }
-  return workspaceFolders;
-};
+const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 const findDirectory = async (startPath, folderName) => {
   try {
@@ -235,6 +229,7 @@ const createDirectory = async (path, name) => {
 };
 
 module.exports = {
+  capitalize,
   createDirectory,
   createFilesWithContent,
   findDirectory,

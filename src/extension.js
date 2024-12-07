@@ -13,6 +13,8 @@ const setupPrettierConfig = require('./commands/setupPrettier/setupPrettierConfi
  * @param {vscode.ExtensionContext} context
  */
 const activate = (context) => {
+  console.log('Shadow garden: ', vscode.workspace.getWorkspaceFolder());
+
   updateContextMenu();
 
   context.subscriptions.push(

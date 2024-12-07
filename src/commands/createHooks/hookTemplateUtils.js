@@ -1,8 +1,7 @@
-const {
-  capitalize,
-  createFileObject,
-} = require('../vscodeHelper/generatorHelpers.js');
-const { getFileType } = require('../vscodeHelper/vscodeHelpers.js');
+const { processErrorMessage } = require('../vscodeHelper/message');
+
+const { createFileObject } = require('../vscodeHelper/fileOperations.js');
+const { getFileType, capitalize } = require('../vscodeHelper/vscodeHelpers.js');
 
 const createHookSource = (hookName, hasState, hasEffect) => {
   const stateImport =
@@ -76,8 +75,7 @@ const generateHookFiles = async (
 
     return filesToGenerate;
   } catch (error) {
-    console.error(error.message);
-    throw new Error('Unable to generate hook files.');
+    processErrorMessage(`Generate hook files error: ${error.message}`);
   }
 };
 
