@@ -1,5 +1,7 @@
-const { createFileObject } = require('../vscodeHelper/fileOperations');
-const { getFileType } = require('../vscodeHelper/vscodeHelpers');
+const {
+  createFileObject,
+  getFileType,
+} = require('../vscodeHelper/fileOperations');
 /**
  * Generates the source code for a React functional component.
  *

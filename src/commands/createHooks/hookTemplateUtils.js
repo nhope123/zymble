@@ -1,7 +1,11 @@
 const { processErrorMessage } = require('../vscodeHelper/message');
 
-const { createFileObject } = require('../vscodeHelper/fileOperations.js');
-const { getFileType, capitalize } = require('../vscodeHelper/vscodeHelpers.js');
+const {
+  createFileObject,
+  getFileType,
+} = require('../vscodeHelper/fileOperations.js');
+const { capitalize } = require('../vscodeHelper/vscodeHelpers.js');
+const vscode = require('vscode');
 
 const createHookSource = (hookName, hasState, hasEffect) => {
   const stateImport =
@@ -55,6 +59,7 @@ const generateHookFiles = async (
 ) => {
   try {
     const extension = await getFileType();
+
     const filesToGenerate = {
       ...createFileObject(
         hookName,

@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('fs').promises;
 const {
   processErrorMessage,
   showInformationMessage,
@@ -55,7 +55,6 @@ const promptForConfigOverride = async (configLocation) => {
 
 const setupPrettierConfig = async (args) => {
   try {
-
     const values = [...args];
 
     let allowConfigOverride = false;
@@ -73,7 +72,7 @@ const setupPrettierConfig = async (args) => {
     const workspace = getCurrentWorkspaceFolders();
 
     // 2. get workspace dirs.
-    const workspaceFolders = fs.readdirSync(workspace[0].uri.fsPath);
+    const workspaceFolders = await fs.readdir(workspace[0].uri.fsPath);
 
     workspaceFolders.forEach(async (i) => {
       switch (true) {
@@ -135,6 +134,7 @@ const setupPrettierConfig = async (args) => {
         packageManager = chosenPackageManager;
       } else {
         processErrorMessage('Cancelled process: no package manager.');
+        return;
       }
     }
 

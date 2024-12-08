@@ -83,26 +83,47 @@
     "languages": [
       {
         "id": "javascript",
-        "aliases": ["JavaScript", "javascript", "js"],
-        "extensions": [".js"],
+        "aliases": [
+          "JavaScript",
+          "javascript",
+          "js"
+        ],
+        "extensions": [
+          ".js"
+        ],
         "configuration": "./language-configuration.json"
       },
       {
-        "id":  "javascriptreact",
-        "aliases": ["React"],
-        "extensions": [".jsx"],
+        "id": "javascriptreact",
+        "aliases": [
+          "React"
+        ],
+        "extensions": [
+          ".jsx"
+        ],
         "configuration": "./language-configuration.json"
       },
       {
-        "id":  "typescriptreact",
-        "aliases": ["React"],
-        "extensions": [".tsx"],
+        "id": "typescriptreact",
+        "aliases": [
+          "React"
+        ],
+        "extensions": [
+          ".tsx"
+        ],
         "configuration": "./language-configuration.json"
       },
       {
         "id": "typescript",
-        "aliases": ["TypeScript", "typescript", "typescriptreact", "ts"],
-        "extensions": [".ts"],
+        "aliases": [
+          "TypeScript",
+          "typescript",
+          "typescriptreact",
+          "ts"
+        ],
+        "extensions": [
+          ".ts"
+        ],
         "configuration": "./language-configuration.json"
       }
     ]

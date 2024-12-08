@@ -1,46 +1,15 @@
 const path = require('path');
 const vscode = require('vscode');
-const fs = require('fs');
+const fs = require('fs').promises;
 const {
-  CONFIGURATION_CONSTANTS: { yesNoOptions, packageJson },
-  CURRENT_FOLDER_OPTION,
-  SELECT_FOLDER_OPTION,
-  CONFIRMATION_CHOICES,
+  CONFIGURATION_CONSTANTS: { packageJson, prettier },
 } = require('../../config/configurationConstants');
-const {
-  processErrorMessage,
-  showInputBox,
-  showQuickPick,
-} = require('./message');
+const { processErrorMessage, showInputBox } = require('./message');
 const { getCurrentWorkspaceFolders } = require('./fileOperations');
 
+const exclusionPath = '**/node_modules/**';
+
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-
-const findDirectory = async (startPath, folderName) => {
-  try {
-    const entries = await fs.promises.readdir(startPath, {
-      withFileTypes: true,
-    });
-
-    for (const entry of entries) {
-      const fullPath = path.join(startPath, entry.name);
-
-      if (entry.isDirectory()) {
-        if (entry.name === folderName) {
-          return fullPath; // Folder found!
-        }
-        // Recursive search in subdirectories
-        const result = await findDirectory(fullPath, folderName);
-        if (result) {
-          return result;
-        }
-      }
-    }
-  } catch (error) {
-    console.error(`Error reading directory: ${startPath}`, error);
-  }
-  return undefined; // Folder not found
-};
 
 const getComponentName = async (options, errorMessage) => {
   // Prompt the user for the component name
@@ -56,82 +25,50 @@ const getComponentName = async (options, errorMessage) => {
       return componentName;
     }
   }
-  throw new Error(errorMessage);
-};
-
-const createFilesWithContent = (folderPath, files) => {
-  try {
-    // Create each file with its corresponding content
-    for (const [fileName, content] of Object.entries(files)) {
-      const filePath = path.join(folderPath, fileName);
-      fs.writeFileSync(filePath, content);
-    }
-  } catch (error) {
-    throw new Error(error);
-  }
-
+  processErrorMessage(`Get component name ${errorMessage}`);
   return;
-};
-
-const getFileType = async () => {
-  try {
-    const packageJsonData = await loadJsonPackages();
-
-    if (
-      packageJsonData.devDependencies &&
-      packageJsonData.devDependencies.typescript
-    ) {
-      return ['tsx', 'ts'];
-    }
-  } catch (err) {
-    console.error('Failed to update context menu:', err);
-  }
-
-  return ['jsx', 'js'];
 };
 
 const loadJsonPackages = async () => {
   try {
-    const workspaceFolders = getCurrentWorkspaceFolders();
+    let packageFile = await vscode.workspace.findFiles(
+      packageJson,
+      exclusionPath
+    );
+    packageFile = packageFile[0].fsPath;
 
-    if (workspaceFolders) {
-      const packageJsonPath = path.join(
-        workspaceFolders[0].uri.fsPath,
-        packageJson
-      );
-      if (fs.existsSync(packageJsonPath)) {
-        return await JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-      }
+    if (packageFile.length > 0) {
+      return JSON.parse(await fs.readFile(packageFile[0].fsPath, 'utf8'));
     }
+    return;
   } catch (error) {
-    processErrorMessage(error.message, 'minor');
+    processErrorMessage(`Load json packages ${error.message}`, 'minor');
   }
-  return;
 };
 
 const updateContextMenu = async () => {
   try {
     const packageJsonData = await loadJsonPackages();
+    const { dependencies } = packageJsonData;
 
-    if (packageJsonData) {
-      if (packageJsonData.dependencies && packageJsonData.dependencies.react) {
-        vscode.commands.executeCommand('setContext', 'isReactProject', true);
-      } else {
-        vscode.commands.executeCommand('setContext', 'isReactProject', false);
-      }
+    if (dependencies && dependencies.react) {
+      vscode.commands.executeCommand('setContext', 'isReactProject', true);
+    } else {
+      vscode.commands.executeCommand('setContext', 'isReactProject', false);
+    }
 
-      // TODO: Analyze this logic
-      if (
-        packageJsonData.devDependencies &&
-        !packageJsonData.devDependencies.prettier
-      ) {
-        vscode.commands.executeCommand('setContext', 'noPrettierConfig', true);
-      } else {
-        vscode.commands.executeCommand('setContext', 'noPrettierConfig', false);
-      }
+    const hasPrettierConfiguration = vscode.workspace.findFiles(
+      `**/${prettier}*`,
+      exclusionPath
+    );
+    if (!hasPrettierConfiguration) {
+      // (devDependencies && !devDependencies.prettier) {
+      vscode.commands.executeCommand('setContext', 'noPrettierConfig', true);
+    } else {
+      vscode.commands.executeCommand('setContext', 'noPrettierConfig', false);
     }
   } catch (err) {
-    processErrorMessage(err.message, 'minor');
+    processErrorMessage(`Update context menu ${err.message}`, 'minor');
   }
 };
 
@@ -142,41 +79,16 @@ const processContextMenuPath = (uri) => {
       ? path.dirname(uri.fsPath)
       : uri.fsPath;
   } catch (err) {
-    processErrorMessage(err.message, 'minor');
+    processErrorMessage(`Process context menu path ${err.message}`, 'minor');
   }
   return;
 };
 
-const createDirectory = async (path, name) => {
-  try {
-    if (fs.existsSync(path)) {
-      const overwrite =
-        (await showQuickPick(CONFIRMATION_CHOICES, {
-          placeholder: `The folder "${name}" already exists. Do you want to overwrite it?`,
-          title: 'Overwrite Existing Folder',
-        })) === yesNoOptions.yes;
-
-      if (!overwrite) {
-        processErrorMessage('Cancel folder override');
-      } else {
-        fs.rmdirSync(path, { recursive: true });
-      }
-    } else {
-      fs.mkdirSync(path, { recursive: true });
-    }
-  } catch (error) {
-    processErrorMessage(error.message);
-  }
-};
-
 module.exports = {
   capitalize,
-  createDirectory,
-  createFilesWithContent,
-  findDirectory,
   getComponentName,
   getCurrentWorkspaceFolders,
-  getFileType,
+  // getFileType,
   loadJsonPackages,
   processContextMenuPath,
   updateContextMenu,

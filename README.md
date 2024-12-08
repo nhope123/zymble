@@ -5,21 +5,24 @@
 Zymble is a VS Code extension that simplifies the React workflow by providing commands to generate React components and hooks with ease.
 
 ## Commands
+
 - **Create React Component**
 - **Create React Hook**
 
 ## Features
 
-- **Create React Component**: 
+- **Create React Component**:
+
   - Generate a folder from the component name.
-  - Generate a React functional components with or without props. 
+  - Generate a React functional components with or without props.
   - Generate a component test file.
   - Generate a types file for components with props.
   - The file extensions depending on TypeScript installation:
     - Component and test files are `.jsx` or `.tsx`.
     - Type files are `.js` or `.ts`.
 
-- **Create React Hook** 
+- **Create React Hook**
+
   - Generate a folder from the hook name in the hooks folder or a User selected folder.
   - Generate custom React hooks with optional useState and useEffect.
   - Generate a hook test file.
@@ -38,10 +41,12 @@ Zymble is a VS Code extension that simplifies the React workflow by providing co
 ## Instructions
 
 ### Download installation file
+
 1. Open the [package folder](https://github.com/nhope123/zymble/tree/main/packages) and select the `zymble<version>.vsix`.
 2. Download and save the raw file to your local directory.
 
 ### Install Extension
+
 1. Open `vscode`
 2. Open the Extensions view by clicking on the Extensions icon in the Activity Bar on the side of the window.
 3. Click the `Views and more Actions` menu to the right of the Extension refresh button.
@@ -52,12 +57,11 @@ Zymble is a VS Code extension that simplifies the React workflow by providing co
 
 ### Cloning the Repository
 
-````sh
+```sh
 git clone https://github.com/nhope123/zymble.git
 cd zymble
 yarn install
-````
-
+```
 
 ### Running in Debug Mode
 
@@ -65,6 +69,7 @@ yarn install
 2. Press `F5` to open a new window with your extension loaded.
 
 ### How to Run the Commands
+
 1. From the Command Palette:
    - Open the Command Palette by pressing Ctrl+Shift+P.
    - Type the name of the extension / command (e.g., Zymble: Create Component) and select it from the list.
