@@ -31,23 +31,22 @@ const getComponentName = async (options, errorMessage) => {
 
 const updateContextMenu = async () => {
   try {
-    //   const packageJsonData = await loadJsonPackages();
-    //   const { dependencies } = packageJsonData;
-    //   if (dependencies && dependencies.react) {
-    //     vscode.commands.executeCommand('setContext', 'isReactProject', true);
-    //   } else {
-    //     vscode.commands.executeCommand('setContext', 'isReactProject', false);
-    //   }
-    //   const hasPrettierConfiguration = vscode.workspace.findFiles(
-    //     `**/${prettier}*`,
-    //     exclusionPath
-    //   );
-    //   if (!hasPrettierConfiguration) {
-    //     // (devDependencies && !devDependencies.prettier) {
-    //     vscode.commands.executeCommand('setContext', 'noPrettierConfig', true);
-    //   } else {
-    //     vscode.commands.executeCommand('setContext', 'noPrettierConfig', false);
-    //   }
+      const packageJsonData = await loadJsonPackages();
+      const { dependencies } = packageJsonData;
+      if (dependencies && dependencies.react) {
+        vscode.commands.executeCommand('setContext', 'isReactProject', true);
+      } else {
+        vscode.commands.executeCommand('setContext', 'isReactProject', false);
+      }
+      const hasPrettierConfiguration = vscode.workspace.findFiles(
+        `**/${prettier}*`,
+        exclusionPath
+      );
+      if (!hasPrettierConfiguration) {
+        vscode.commands.executeCommand('setContext', 'noPrettierConfig', true);
+      } else {
+        vscode.commands.executeCommand('setContext', 'noPrettierConfig', false);
+      }
   } catch (err) {
     processErrorMessage(`Update context menu ${err.message}`, 'minor');
   }

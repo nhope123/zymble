@@ -19,7 +19,11 @@ const {
   PRETTIER_CONSTANTS: { prettier },
 } = require('../../config/prettierConstants');
 const vscode = require('vscode');
-const { createConfigFile } = require('./prettierConfigUtils');
+const {
+  createConfigFile,
+  promptForConfigOverride,
+} = require('./prettierConfigUtils');
+const fs = require('fs/promises');
 
 const exclusionPath = '**/node_modules/**';
 
@@ -76,10 +80,17 @@ const generatePrettierConfig = async () => {
 
     // Confirm overwriting existing config
     const existingConfig = await findFiles('**/*prettier*', exclusionPath);
-    if (existingConfig.length > 0) {
+    const packageJsonConfig = packageJsonData.prettier ?? false;
+    if (existingConfig.length > 0 || packageJsonConfig) {
       if (!(await promptForConfigOverride())) {
         return;
       }
+      if (packageJsonConfig) {
+        delete packageJsonData.prettier;
+        await fs.writeFile(path.join(workspacePath, 'package.json'), JSON.stringify(packageJsonData));
+      } else {
+        await fs.rm(existingConfig[0].fsPath, { force: true });
+      }     
     }
 
     // Prompt user for config format

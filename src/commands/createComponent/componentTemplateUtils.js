@@ -2,19 +2,13 @@ const {
   createFileObject,
   getFileType,
 } = require('../vscodeHelper/fileOperations');
+
 /**
  * Generates the source code for a React functional component.
  *
- * @param componentName - The name of the component to be created.
- * @param hasProps - A boolean indicating whether the component will receive props. Defaults to false.
- * @returns The source code string for the React functional component.
- *
- * The generated component will:
- * - Import the necessary React types.
- * - Conditionally import the component's props type if `hasProps` is true.
- * - Define the component as a functional component, optionally typed with props.
- * - Return a simple JSX element containing the component's name.
- * - Export the component as the default export.
+ * @param componentName - The name of the component.
+ * @param hasProps - Whether the component has props. Defaults to false.
+ * @returns The source code string for the component.
  */
 const createComponentSource = (componentName, hasProps = false) => {
   const componentFunctionType = hasProps
@@ -35,10 +29,10 @@ const ${componentName}: ${componentFunctionType} => {
 };
 
 /**
- * Generates a TypeScript interface definition for the props of a given component.
+ * Generates a TypeScript interface for the component props.
  *
- * @param componentName - The name of the component for which the props interface is being created.
- * @returns A string representing the TypeScript interface definition for the component's props.
+ * @param componentName - The name of the component.
+ * @returns The TypeScript interface string for the props.
  */
 const createComponentPropsDefinition = (componentName) =>
   `interface ${componentName}Props {\n\n};\n\nexport { ${componentName}Props };`;
@@ -46,11 +40,8 @@ const createComponentPropsDefinition = (componentName) =>
 /**
  * Generates the content for a component test file.
  *
- * This function creates a string containing the necessary imports and a basic test
- * for rendering a React component using the `@testing-library/react` library.
- *
- * @param componentName - The name of the component to generate the test for.
- * @returns A string containing the test file content for the specified component.
+ * @param componentName - The name of the component.
+ * @returns The test file content string.
  */
 const createComponentTestContent = (componentName) => {
   const componentTestImport = `import { render } from '@testing-library/react';
@@ -70,11 +61,11 @@ describe('${componentName}', () => {
 };
 
 /**
- * Generates the necessary files for a React component.
+ * Generates files for a React component.
  *
- * @param componentName - The name of the component to generate files for.
- * @param hasProps - A boolean indicating whether the component has props. Defaults to `false`.
- * @returns An object containing the generated files.
+ * @param componentName - The name of the component.
+ * @param hasProps - Whether the component has props. Defaults to false.
+ * @returns An object with the generated files.
  */
 const generateComponentFiles = async (componentName, hasProps = false) => {
   try {

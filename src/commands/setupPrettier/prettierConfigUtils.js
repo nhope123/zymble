@@ -1,6 +1,12 @@
-const { CONFIRMATION_CHOICES } = require('../../config/configurationConstants');
+const {
+  CONFIRMATION_CHOICES,
+  CONFIGURATION_CONSTANTS: { yesNoOptions },
+} = require('../../config/configurationConstants');
 
-const { processErrorMessage, showQuickPick } = require('../vscodeHelper/message');
+const {
+  processErrorMessage,
+  showQuickPick,
+} = require('../vscodeHelper/message');
 const {
   loadJsonPackages,
   evaluatePackageDependencies,
@@ -95,13 +101,15 @@ const generateConfigContent = async (workspace, format) => {
       ...(hasTypescript ? typescriptConfig : {}),
     };
 
-    const userPrettierSettings = vscode.workspace.getConfiguration().prettier ?? false;
+    const userPrettierSettings =
+      vscode.workspace.getConfiguration().prettier ?? false;
 
     if (userPrettierSettings) {
-      const confirmUseSettings = ( await showQuickPick(CONFIRMATION_CHOICES, {
-        placeholder: "Do you want to use vscode Prettier configuration?",
-        title: 'User Prettier Config',
-      })) === yesNoOptions.yes;
+      const confirmUseSettings =
+        (await showQuickPick(CONFIRMATION_CHOICES, {
+          placeholder: 'Do you want to use vscode Prettier configuration?',
+          title: 'User Prettier Config',
+        })) === yesNoOptions.yes;
 
       if (confirmUseSettings) {
         config = userPrettierSettings;
@@ -145,7 +153,9 @@ const createConfigFile = async (workspace, format) => {
     throw new Error('Create file error');
   }
 
-  fs.writeFile(file.filePath, file.content);
+  await fs.writeFile(file.filePath, file.content);
+  const ignoreFile = `/node_modules/\n`;
+  await fs.writeFile(path.join(workspace, '.prettierignore'), ignoreFile);
 };
 
 module.exports = {
