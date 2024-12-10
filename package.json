@@ -151,5 +151,8 @@
     "prettier": "^3.4.2",
     "sharp": "^0.33.5",
     "vscode-test": "^1.6.1"
+  },
+  "dependencies": {
+    "yaml": "^2.6.1"
   }
 }

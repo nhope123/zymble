@@ -1,6 +1,6 @@
 const CONFIGURATION_CONSTANTS = Object.freeze({
   packageJson: 'package.json',
-  packageLock: 'package.json.lock',
+  packageLock: 'package-lock.json',
   packageManagers: Object.freeze({ yarn: 'yarn', npm: 'npm' }),
   packageYaml: 'package.yaml',
   react: 'react',

@@ -1,11 +1,9 @@
 const { processErrorMessage } = require('../vscodeHelper/message');
-
 const {
   createFileObject,
   getFileType,
 } = require('../vscodeHelper/fileOperations.js');
 const { capitalize } = require('../vscodeHelper/vscodeHelpers.js');
-const vscode = require('vscode');
 
 const createHookSource = (hookName, hasState, hasEffect) => {
   const stateImport =

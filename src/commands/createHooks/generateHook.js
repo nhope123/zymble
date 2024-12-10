@@ -17,7 +17,7 @@ const generateHookFiles = require('./hookTemplateUtils.js');
 const {
   createDirectory,
   createFilesWithContent,
-  getCurrentWorkspaceFolders,
+  fetchWorkspaceFolders,
   getTargetFolder,
   findDirectory,
 } = require('../vscodeHelper/fileOperations');
@@ -26,7 +26,7 @@ const regex = /^use/i;
 
 const generateHook = async (uri) => {
   try {
-    const workspaceFolder = getCurrentWorkspaceFolders()[0].uri.fsPath;
+    const workspaceFolder = fetchWorkspaceFolders()[0].uri.fsPath;
 
     // Get hook name
     let hookName = await getComponentName(

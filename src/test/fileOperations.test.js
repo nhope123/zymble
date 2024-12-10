@@ -2,7 +2,7 @@ const { suite, test } = require('mocha');
 
 const {
   createFileObject,
-  getCurrentWorkspaceFolders,
+  fetchWorkspaceFolders,
 } = require('../commands/vscodeHelper/fileOperations');
 const assert = require('assert');
 const vscode = require('vscode');
@@ -103,8 +103,7 @@ suite('File Operations helper', () => {
         },
       ];
 
-      const folder = vscode.workspace.getCurrentWorkspaceFolders();
-      const workspaceFolders = getCurrentWorkspaceFolders();
+      const workspaceFolders = fetchWorkspaceFolders();
       assert.ok(
         Array.isArray(workspaceFolders),
         'Expected an array of workspace folders'
@@ -120,7 +119,7 @@ suite('File Operations helper', () => {
       // Mocking no workspace folders
       vscode.workspace.workspaceFolders = undefined;
 
-      const workspaceFolders = getCurrentWorkspaceFolders();
+      const workspaceFolders = fetchWorkspaceFolders();
       assert.strictEqual(
         workspaceFolders.length,
         0,

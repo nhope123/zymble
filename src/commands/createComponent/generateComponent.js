@@ -16,14 +16,14 @@ const {
 const {
   createDirectory,
   createFilesWithContent,
-  getCurrentWorkspaceFolders,
+  fetchWorkspaceFolders,
   getTargetFolder,
 } = require('../vscodeHelper/fileOperations');
 const vscode = require('vscode');
 
 const generateComponent = async (uri) => {
   try {
-    getCurrentWorkspaceFolders();
+    fetchWorkspaceFolders();
 
     // Prompt the user for the component name
     const componentName = await getComponentName(

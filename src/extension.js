@@ -2,7 +2,7 @@ const vscode = require('vscode');
 const generateComponent = require('./commands/createComponent/generateComponent');
 const generateHook = require('./commands/createHooks/generateHook');
 const { updateContextMenu } = require('./commands/vscodeHelper/vscodeHelpers');
-const setupPrettierConfig = require('./commands/setupPrettier/setupPrettierConfig');
+const generatePrettierConfig = require('./commands/setupPrettier/generatePrettierConfig');
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -24,7 +24,7 @@ const activate = (context) => {
   context.subscriptions.push(
     vscode.commands.registerCommand(
       'zymble.addPrettierConfig',
-      setupPrettierConfig
+      generatePrettierConfig
     )
   );
 };

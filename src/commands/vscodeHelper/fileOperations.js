@@ -130,7 +130,7 @@ const findDirectory = async (startPath, folderName) => {
  * @returns {vscode.WorkspaceFolder[] | undefined} The array of workspace folders, or undefined if no folders are open.
  * @throws Will call processErrorMessage if no folders are open.
  */
-const getCurrentWorkspaceFolders = () => {
+const fetchWorkspaceFolders = () => {
   const workspaceFolders = vscode.workspace.workspaceFolders;
 
   if (!workspaceFolders) {
@@ -186,7 +186,7 @@ const getFileType = async () => {
  * @returns {Promise<string>} The path of the selected target folder.
  */
 const getTargetFolder = async (options) => {
-  const workspaceFolders = getCurrentWorkspaceFolders();
+  const workspaceFolders = fetchWorkspaceFolders();
   const workspaceFolder = workspaceFolders[0].uri.fsPath; // Default to root folder
 
   // Get active window
@@ -240,12 +240,17 @@ const getTargetFolder = async (options) => {
   return workspaceFolder;
 };
 
+const findFiles = async (name, excludes) => {
+  return vscode.workspace.findFiles(name, excludes);
+};
+
 module.exports = {
   createDirectory,
   createFileObject,
   createFilesWithContent,
   findDirectory,
-  getCurrentWorkspaceFolders,
+  fetchWorkspaceFolders,
   getFileType,
   getTargetFolder,
+  findFiles,
 };
