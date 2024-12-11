@@ -134,7 +134,7 @@
     "format": "prettier --write .",
     "check-format": "prettier --check .",
     "lint": "eslint .",
-    "test": "vscode-test --force-node-api-uncaught-exceptions-policy=true ./node_modules/mocha"
+    "test": "vscode-test "
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
@@ -146,6 +146,7 @@
     "@vscode/vsce": "^3.2.1",
     "assert": "^2.1.0",
     "eslint": "^9.16.0",
+    "glob": "^11.0.0",
     "prettier": "^3.4.2",
     "sharp": "^0.33.5",
     "sinon": "^19.0.2",

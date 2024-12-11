@@ -1,16 +1,33 @@
-const { describe, test } = require('mocha');
+const { describe, test, beforeEach, afterEach } = require('mocha');
+const sinon = require('sinon');
 
-const { createFileObject, fetchWorkspaceFolders } = require('./fileOperations');
+const { createFileObject, fetchWorkspaceFolders } = require('../../commands/vscodeHelper/fileOperations');
 const assert = require('assert');
 const vscode = require('vscode');
 
 describe('File Operations helper', () => {
   describe('Create File Object', () => {
+    // let consoleStub;
+    beforeEach(() => {
+      // Stub console.log
+      // consoleStub = sinon.stub(console, 'log');
+    });
+
+    afterEach(() => {
+      // Restore console.log
+      // consoleStub.restore();
+    });
+
     test('Should throw error for missing name', () => {
+      // const originalConsoleError = console.error;
+      // console.error = () => {}; // Silence console.error
+      // consoleStub.returns('');
       assert.throws(
         () => createFileObject(null, 'tsx', 'content'),
         new Error('Create File Object Error: Missing file name or extension.')
       );
+
+      // console.error = originalConsoleError; // Restore console.error
     });
 
     test('Should throw error for missing extension', () => {

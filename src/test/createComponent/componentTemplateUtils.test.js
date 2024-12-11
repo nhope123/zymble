@@ -4,11 +4,10 @@ const {
   createComponentSource,
   createComponentTestContent,
   generateComponentFiles,
-} = require('./componentTemplateUtils');
+} = require('../../commands/createComponent/componentTemplateUtils');
 const { describe, test, beforeEach, afterEach } = require('mocha');
 const sinon = require('sinon');
-const fileOps = require('../vscodeHelper/fileOperations');
-const vscode = require('vscode');
+const fileOps = require('../../commands/vscodeHelper/fileOperations'); 
 
 describe('Component Template Utils', () => {
   describe('Create Component Props Definition', () => {
@@ -96,26 +95,26 @@ describe('', () => {
   });
   describe('Generate Component Files', () => {
     const getFileTypeStub = sinon.stub(fileOps, 'getFileType');
-  
+
     beforeEach(() => {
       getFileTypeStub.resolves(['.jsx', '.js']);
     });
-  
+
     afterEach(() => {
       sinon.restore();
     });
-  
+
     test('should generate correct files without props', async () => {
       const componentName = 'TestComponent';
       const expectedOutput = {
         'TestComponent.jsx': `import { FC } from 'react';\n\nconst TestComponent: FC = () => {\n  \n  return <div>TestComponent Component</div>;\n};\n  \nexport default TestComponent;\n  `,
         'TestComponent.test.jsx': `import { render } from '@testing-library/react';\nimport { describe, expect, it } from 'vitest';\nimport TestComponent from './TestComponent';\n\ndescribe('TestComponent', () => {  \n  it('renders TestComponent', () => {\n    const { getByText } = render(<TestComponent />);\n\n    expect(getByText('TestComponent Component')).toBeInTheDocument();\n  });\n});\n`,
       };
-  
+
       const result = await generateComponentFiles(componentName);
       assert.deepEqual(result, expectedOutput);
     });
-  
+
     test('should generate correct files with props', async () => {
       const componentName = 'TestComponent';
       const expectedOutput = {
@@ -123,21 +122,20 @@ describe('', () => {
         'TestComponent.test.jsx': `import { render } from '@testing-library/react';\nimport { describe, expect, it } from 'vitest';\nimport TestComponent from './TestComponent';\n\ndescribe('TestComponent', () => {  \n  it('renders TestComponent', () => {\n    const { getByText } = render(<TestComponent />);\n\n    expect(getByText('TestComponent Component')).toBeInTheDocument();\n  });\n});\n`,
         'types.js': `interface TestComponentProps {\n\n};\n\nexport { TestComponentProps };`,
       };
-  
+
       const result = await generateComponentFiles(componentName, true);
       assert.deepEqual(result, expectedOutput);
     });
-  
+
     test('should handle errors gracefully', async () => {
       getFileTypeStub.rejects(new Error('Test error'));
-  
+
       const result = await generateComponentFiles('TestComponent');
       const expectedOutput = {
         'TestComponent.jsx': `import { FC } from 'react';\n\nconst TestComponent: FC = () => {\n  \n  return <div>TestComponent Component</div>;\n};\n  \nexport default TestComponent;\n  `,
         'TestComponent.test.jsx': `import { render } from '@testing-library/react';\nimport { describe, expect, it } from 'vitest';\nimport TestComponent from './TestComponent';\n\ndescribe('TestComponent', () => {  \n  it('renders TestComponent', () => {\n    const { getByText } = render(<TestComponent />);\n\n    expect(getByText('TestComponent Component')).toBeInTheDocument();\n  });\n});\n`,
-      };      
+      };
       assert.deepEqual(result, expectedOutput);
-
     });
   });
 });
