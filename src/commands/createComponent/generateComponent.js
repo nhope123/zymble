@@ -56,13 +56,13 @@ const generateComponent = async (uri) => {
 
     // Create the folder for the new component
     const componentFolderPath = path.join(targetFolderPath, componentName);
-    createDirectory(componentFolderPath, componentName);
+    await createDirectory(componentFolderPath, componentName);
 
     // Define the files and their contents
     const files = await generateComponentFiles(componentName, hasProps);
 
     // Create each file with its corresponding content
-    createFilesWithContent(componentFolderPath, files);
+    await createFilesWithContent(componentFolderPath, files);
 
     showInformationMessage(`Component ${componentName} created successfully!`);
   } catch (error) {

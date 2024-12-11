@@ -87,10 +87,13 @@ const generatePrettierConfig = async () => {
       }
       if (packageJsonConfig) {
         delete packageJsonData.prettier;
-        await fs.writeFile(path.join(workspacePath, 'package.json'), JSON.stringify(packageJsonData));
+        await fs.writeFile(
+          path.join(workspacePath, 'package.json'),
+          JSON.stringify(packageJsonData)
+        );
       } else {
         await fs.rm(existingConfig[0].fsPath, { force: true });
-      }     
+      }
     }
 
     // Prompt user for config format

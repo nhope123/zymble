@@ -1,14 +1,11 @@
-const { suite, test } = require('mocha');
+const { describe, test } = require('mocha');
 
-const {
-  createFileObject,
-  fetchWorkspaceFolders,
-} = require('../commands/vscodeHelper/fileOperations');
+const { createFileObject, fetchWorkspaceFolders } = require('./fileOperations');
 const assert = require('assert');
 const vscode = require('vscode');
 
-suite('File Operations helper', () => {
-  suite('Create File Object', () => {
+describe('File Operations helper', () => {
+  describe('Create File Object', () => {
     test('Should throw error for missing name', () => {
       assert.throws(
         () => createFileObject(null, 'tsx', 'content'),
@@ -80,54 +77,54 @@ suite('File Operations helper', () => {
     });
   });
 
-  suite('Get Current Workspace Folders', () => {
-    // beforeEach(() => {
-    //   originalWorkspaceFolders = vscode.workspace.workspaceFolders;
-    // });
+  // describe('Get Current Workspace Folders', () => {
+  //   // beforeEach(() => {
+  //   //   originalWorkspaceFolders = vscode.workspace.workspaceFolders;
+  //   // });
 
-    // afterEach(() => {
-    //   vscode.workspace.workspaceFolders = originalWorkspaceFolders;
-    // });
+  //   // afterEach(() => {
+  //   //   vscode.workspace.workspaceFolders = originalWorkspaceFolders;
+  //   // });
 
-    test('Should return an array of workspace folders', () => {
-      const originalWorkspaceFolders = vscode.workspace.workspaceFolders;
+  //   test('Should return an array of workspace folders', () => {
+  //     const originalWorkspaceFolders = vscode.workspace.workspaceFolders;
 
-      // Mocking workspace folders
-      vscode.workspace.workspaceFolders = [
-        {
-          uri: {
-            fsPath: '/path/to/workspace',
-          },
-          name: 'workspace',
-          index: 0,
-        },
-      ];
+  //     // Mocking workspace folders
+  //     vscode.workspace.workspaceFolders = [
+  //       {
+  //         uri: {
+  //           fsPath: '/path/to/workspace',
+  //         },
+  //         name: 'workspace',
+  //         index: 0,
+  //       },
+  //     ];
 
-      const workspaceFolders = fetchWorkspaceFolders();
-      assert.ok(
-        Array.isArray(workspaceFolders),
-        'Expected an array of workspace folders'
-      );
+  //     const workspaceFolders = fetchWorkspaceFolders();
+  //     assert.ok(
+  //       Array.isArray(workspaceFolders),
+  //       'Expected an array of workspace folders'
+  //     );
 
-      // Restore the original workspace folders
-      vscode.workspace.workspaceFolders = originalWorkspaceFolders;
-    });
+  //     // Restore the original workspace folders
+  //     vscode.workspace.workspaceFolders = originalWorkspaceFolders;
+  //   });
 
-    test('Should return an empty array if no workspace folders are open', () => {
-      const originalWorkspaceFolders = vscode.workspace.workspaceFolders;
+  //   test('Should return an empty array if no workspace folders are open', () => {
+  //     const originalWorkspaceFolders = vscode.workspace.workspaceFolders;
 
-      // Mocking no workspace folders
-      vscode.workspace.workspaceFolders = undefined;
+  //     // Mocking no workspace folders
+  //     vscode.workspace.workspaceFolders = undefined;
 
-      const workspaceFolders = fetchWorkspaceFolders();
-      assert.strictEqual(
-        workspaceFolders.length,
-        0,
-        'Expected an empty array when no workspace folders are open'
-      );
+  //     const workspaceFolders = fetchWorkspaceFolders();
+  //     assert.strictEqual(
+  //       workspaceFolders.length,
+  //       0,
+  //       'Expected an empty array when no workspace folders are open'
+  //     );
 
-      // Restore the original workspace folders
-      vscode.workspace.workspaceFolders = originalWorkspaceFolders;
-    });
-  });
+  //     // Restore the original workspace folders
+  //     vscode.workspace.workspaceFolders = originalWorkspaceFolders;
+  //   });
+  // });
 });
