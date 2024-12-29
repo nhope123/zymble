@@ -1,23 +1,24 @@
 const { describe, test, beforeEach, afterEach } = require('mocha');
 const sinon = require('sinon');
-
-const { createFileObject, fetchWorkspaceFolders } = require('../../commands/vscodeHelper/fileOperations');
-const assert = require('assert');
+const fs = require('fs').promises;
 const vscode = require('vscode');
+const message = require('../../commands/vscodeHelper/message')
+
+const {
+  createFileObject,
+  fetchWorkspaceFolders,
+  getFileType,
+  createDirectory,
+} = require('../../commands/vscodeHelper/fileOperations');
+const assert = require('assert');
+
+let findFilesStub;
+let readFileStub;
+let sandbox;
 
 describe('File Operations helper', () => {
   describe('Create File Object', () => {
-    // let consoleStub;
-    beforeEach(() => {
-      // Stub console.log
-      // consoleStub = sinon.stub(console, 'log');
-    });
-
-    afterEach(() => {
-      // Restore console.log
-      // consoleStub.restore();
-    });
-
+   
     test('Should throw error for missing name', () => {
       // const originalConsoleError = console.error;
       // console.error = () => {}; // Silence console.error
@@ -94,54 +95,175 @@ describe('File Operations helper', () => {
     });
   });
 
-  // describe('Get Current Workspace Folders', () => {
-  //   // beforeEach(() => {
-  //   //   originalWorkspaceFolders = vscode.workspace.workspaceFolders;
-  //   // });
+  describe('createDirectory', () => {
+    let accessStub, rmdirStub, mkdirStub, showQuickPickStub, processErrorMessageStub;
 
-  //   // afterEach(() => {
-  //   //   vscode.workspace.workspaceFolders = originalWorkspaceFolders;
-  //   // });
+    beforeEach(() => {
+      sandbox = sinon.createSandbox();
+      accessStub = sandbox.stub(fs, 'access');
+      rmdirStub = sandbox.stub(fs, 'rmdir');
+      mkdirStub = sandbox.stub(fs, 'mkdir');
+      showQuickPickStub = sinon.stub(message, 'showQuickPick');
+      processErrorMessageStub = sandbox.stub(message, 'processErrorMessage');
+    });
 
-  //   test('Should return an array of workspace folders', () => {
-  //     const originalWorkspaceFolders = vscode.workspace.workspaceFolders;
+    afterEach(() => {
+      sandbox.restore();
+    });
 
-  //     // Mocking workspace folders
-  //     vscode.workspace.workspaceFolders = [
-  //       {
-  //         uri: {
-  //           fsPath: '/path/to/workspace',
-  //         },
-  //         name: 'workspace',
-  //         index: 0,
-  //       },
-  //     ];
+    test('should create a new directory if it does not exist', async () => {
+      accessStub.rejects();
+      mkdirStub.resolves();
 
-  //     const workspaceFolders = fetchWorkspaceFolders();
-  //     assert.ok(
-  //       Array.isArray(workspaceFolders),
-  //       'Expected an array of workspace folders'
-  //     );
+      await createDirectory('/path/to/dir', 'dir');
 
-  //     // Restore the original workspace folders
-  //     vscode.workspace.workspaceFolders = originalWorkspaceFolders;
-  //   });
+      assert(mkdirStub.calledOnceWith('/path/to/dir', { recursive: true }));
+    });
 
-  //   test('Should return an empty array if no workspace folders are open', () => {
-  //     const originalWorkspaceFolders = vscode.workspace.workspaceFolders;
+    test('should prompt for overwrite if directory exists', async () => {
+      accessStub.resolves();
+      showQuickPickStub.resolves('yes');
+      rmdirStub.resolves();
+      mkdirStub.resolves();
 
-  //     // Mocking no workspace folders
-  //     vscode.workspace.workspaceFolders = undefined;
+      await createDirectory('/path/to/dir', 'dir');
 
-  //     const workspaceFolders = fetchWorkspaceFolders();
-  //     assert.strictEqual(
-  //       workspaceFolders.length,
-  //       0,
-  //       'Expected an empty array when no workspace folders are open'
-  //     );
+      assert(showQuickPickStub.calledOnce);
+      assert(rmdirStub.calledOnceWith('/path/to/dir', { recursive: true }));
+      assert(mkdirStub.calledOnceWith('/path/to/dir', { recursive: true }));
+      done();
+    });
 
-  //     // Restore the original workspace folders
-  //     vscode.workspace.workspaceFolders = originalWorkspaceFolders;
-  //   });
-  // });
+    test('should not overwrite if user cancels', async () => {
+      accessStub.resolves();
+      showQuickPickStub.resolves('no');
+
+      await createDirectory('/path/to/dir', 'dir');
+
+      assert(showQuickPickStub.calledOnce);
+      assert(rmdirStub.notCalled);
+      assert(mkdirStub.notCalled);
+      assert(processErrorMessageStub.calledOnceWith('Cancel folder override'));
+    });
+
+    test('should handle errors', async () => {
+      accessStub.rejects(new Error('access error'));
+      processErrorMessageStub.resetHistory();
+
+      await createDirectory('/path/to/dir', 'dir');
+
+      assert(processErrorMessageStub.calledOnceWith('access error'));
+    });
+  });
+
+  describe('Get File Type', () => {
+    beforeEach(() => {
+      findFilesStub = sinon.stub(vscode.workspace, 'findFiles');
+      readFileStub = sinon.stub(fs, 'readFile');
+    });
+
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    test('Should return TypeScript file types if TypeScript files are found', async () => {
+      findFilesStub.onFirstCall().resolves([{ fsPath: 'file.ts' }]);
+      findFilesStub.onSecondCall().resolves([]);
+
+      const result = await getFileType();
+      assert.deepStrictEqual(result, ['tsx', 'ts']);
+    });
+
+    test('Should return TypeScript file types if TypeScript is in devDependencies', async () => {
+      findFilesStub.onFirstCall().resolves([]);
+      findFilesStub.onSecondCall().resolves([{ fsPath: 'package.json' }]);
+      readFileStub.resolves(
+        JSON.stringify({ devDependencies: { typescript: '^4.0.0' } })
+      );
+
+      const result = await getFileType();
+      assert.deepStrictEqual(result, ['tsx', 'ts']);
+    });
+
+    test('Should return JavaScript file types if no TypeScript files or devDependencies are found', async () => {
+      findFilesStub.onFirstCall().resolves([]);
+      findFilesStub.onSecondCall().resolves([]);
+
+      const result = await getFileType();
+      assert.deepStrictEqual(result, ['jsx', 'js']);
+    });
+
+    test('Should handle errors and return undefined', async () => {
+      findFilesStub.rejects(new Error('Failed to find files'));
+
+      const result = await getFileType();
+      assert.strictEqual(result, undefined);
+
+      findFilesStub.restore();
+      findFilesStub.onFirstCall().resolves([]);
+      findFilesStub.onSecondCall().resolves([{ fsPath: 'package.json' }]);
+      readFileStub.rejects(new Error('Fail file read!'));
+
+      const result2 = await getFileType();
+      assert.strictEqual(result2, undefined);
+    });
+  });
+
+  describe('Get Current Workspace Folders', () => {
+    beforeEach(() => {
+      sandbox = sinon.createSandbox();
+    });
+
+    afterEach(() => {
+      sandbox.restore();
+    });
+
+    test('should return workspace folders when they exist', () => {
+      const mockWorkspaceFolders = [
+        { uri: vscode.Uri.file('/path/to/folder1'), name: 'folder1', index: 0 },
+        { uri: vscode.Uri.file('/path/to/folder2'), name: 'folder2', index: 1 }
+      ];
+      sandbox.stub(vscode.workspace, 'workspaceFolders').value(mockWorkspaceFolders);
+  
+  
+      const result = fetchWorkspaceFolders();
+  
+  
+      assert.strictEqual(result, mockWorkspaceFolders);
+    });
+
+    test('should call processErrorMessage and return undefined when no workspace folders', () => {
+      sandbox.stub(vscode.workspace, 'workspaceFolders').value(undefined);
+            
+      assert.throws(fetchWorkspaceFolders, new Error('Please open a folder first.'));      
+    });
+  
+  
+    test('should handle empty array of workspace folders', () => {
+      sandbox.stub(vscode.workspace, 'workspaceFolders').value([]);
+  
+  
+      const result = fetchWorkspaceFolders();
+  
+  
+      assert.deepStrictEqual(result, []);
+    });
+  
+  
+    test('should not call processErrorMessage when workspace folders exist', () => {
+      const mockWorkspaceFolders = [
+        { uri: vscode.Uri.file('/path/to/folder'), name: 'folder', index: 0 }
+      ];
+      sandbox.stub(vscode.workspace, 'workspaceFolders').value(mockWorkspaceFolders);
+      const processErrorMessageStub = sandbox.stub(message, 'processErrorMessage');
+  
+  
+      fetchWorkspaceFolders();
+  
+  
+      assert(processErrorMessageStub.notCalled);
+    });
+
+    
+  });
 });

@@ -134,7 +134,7 @@
     "format": "prettier --write .",
     "check-format": "prettier --check .",
     "lint": "eslint .",
-    "test": "vscode-test "
+    "test": "vscode-test --trace-deprecation --force-node-api-uncaught-exceptions-policy=true"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",

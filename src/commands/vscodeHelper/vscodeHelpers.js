@@ -4,7 +4,6 @@ const {
   CONFIGURATION_CONSTANTS: { prettier },
 } = require('../../config/configurationConstants');
 const { processErrorMessage, showInputBox } = require('./message');
-const { fetchWorkspaceFolders } = require('./fileOperations');
 const { loadJsonPackages } = require('./dependencies');
 
 const exclusionPath = '**/node_modules/**';
@@ -32,6 +31,9 @@ const getComponentName = async (options, errorMessage) => {
 const updateContextMenu = async () => {
   try {
     const packageJsonData = await loadJsonPackages();
+
+    console.log('packages: ', packageJsonData);
+    
     const { dependencies } = packageJsonData;
     if (dependencies && dependencies.react) {
       vscode.commands.executeCommand('setContext', 'isReactProject', true);
@@ -67,7 +69,6 @@ const processContextMenuPath = (uri) => {
 module.exports = {
   capitalize,
   getComponentName,
-  fetchWorkspaceFolders,
   processContextMenuPath,
   updateContextMenu,
 };

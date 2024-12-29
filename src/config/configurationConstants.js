@@ -28,6 +28,7 @@ const CONFIGURATION_CONSTANTS = Object.freeze({
   },
   dependencies: 'dependencies',
   devDependencies: 'devDependencies',
+  exclusionPath: '**/{node_modules,.vscode*}/**',
 });
 
 const CONFIRMATION_CHOICES = Object.freeze(

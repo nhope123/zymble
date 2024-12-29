@@ -70,6 +70,8 @@ describe('${componentName}', () => {
 const generateComponentFiles = async (componentName, hasProps = false) => {
   try {
     const extension = await getFileType();
+    console.log('extension: ', extension);
+    
 
     const filesToGenerate = {
       ...createFileObject(

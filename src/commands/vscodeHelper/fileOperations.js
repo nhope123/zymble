@@ -3,13 +3,33 @@ const vscode = require('vscode');
 const path = require('path');
 const fs = require('fs').promises;
 const {
-  CONFIGURATION_CONSTANTS: { packageJson, yesNoOptions },
+  CONFIGURATION_CONSTANTS: { packageJson, yesNoOptions, exclusionPath },
   CURRENT_FOLDER_OPTION,
   SELECT_FOLDER_OPTION,
   CONFIRMATION_CHOICES,
 } = require('../../config/configurationConstants');
 
 const NO_FOLDER_SELECTED = 'No folder selected. Operation cancelled.';
+const CANCEL_FOLDER_OVERRIDE = 'Cancel folder override';
+const OVERRIDE_FOLDER_TITLE = 'Overwrite Existing Folder';
+const FILE_OBJECT_ERROR =
+  'Create File Object Error: Missing file name or extension.';
+const OPEN_FILE_ERROR = 'Please open a folder first.';
+
+const TYPESCRIPT = ['tsx', 'ts'];
+const JAVASCRIPT = ['jsx', 'js'];
+const SELECT_FOLDER = 'Select a folder';
+const SELECT_TARGET_FOLDER = 'Select the target folder';
+
+const createDirectoryReadError = (startPath, error) =>
+  `Error reading directory: ${startPath} ${error}`;
+const createUnidentifiedFileTypeError = (message) =>
+  `Failed to determine file type: ${message}`;
+const createFileCreationError = (message) =>
+  `Failed to create files: ${message}`;
+
+const createOverwriteMessage = (name) =>
+  `The folder "${name}" already exists. Do you want to overwrite it?`;
 
 /**
  * Creates a directory at the specified file path. If the directory already exists,
@@ -29,18 +49,17 @@ const createDirectory = async (filePath, name) => {
     if (exists) {
       const overwrite =
         (await showQuickPick(CONFIRMATION_CHOICES, {
-          placeholder: `The folder "${name}" already exists. Do you want to overwrite it?`,
-          title: 'Overwrite Existing Folder',
+          placeholder: createOverwriteMessage(name),
+          title: OVERRIDE_FOLDER_TITLE,
         })) === yesNoOptions.yes;
 
       if (!overwrite) {
-        processErrorMessage('Cancel folder override');
+        processErrorMessage(CANCEL_FOLDER_OVERRIDE);
         return;
       }
-      fs.rmdir(filePath, { recursive: true });
-    } else {
-      fs.mkdir(filePath, { recursive: true });
+      await fs.rmdir(filePath, { recursive: true });
     }
+    await fs.mkdir(filePath, { recursive: true });
   } catch (error) {
     processErrorMessage(error.message);
   }
@@ -56,9 +75,7 @@ const createDirectory = async (filePath, name) => {
  */
 const createFileObject = (name, extension, content) => {
   if (!name || !extension) {
-    processErrorMessage(
-      'Create File Object Error: Missing file name or extension.'
-    );
+    processErrorMessage(FILE_OBJECT_ERROR);
   }
   return {
     [`${name}.${extension}`]: content,
@@ -78,12 +95,10 @@ const createFilesWithContent = async (folderPath, files) => {
     // Create each file with its corresponding content
     for (const [fileName, content] of Object.entries(files)) {
       const filePath = path.join(folderPath, fileName);
-      fs.writeFile(filePath, content);
+      await fs.writeFile(filePath, content);
     }
-
-    // await Promise.all(fileWritePromises);
   } catch (error) {
-    processErrorMessage(`Failed to create files: ${error.message}`);
+    processErrorMessage(createFileCreationError(error.message));
   }
 };
 
@@ -115,11 +130,7 @@ const findDirectory = async (startPath, folderName) => {
       }
     }
   } catch (error) {
-    processErrorMessage(
-      `Error reading directory: ${startPath} ${error}`,
-      'minor'
-    );
-    return;
+    processErrorMessage(createDirectoryReadError(startPath, error), 'minor');
   }
   return undefined;
 };
@@ -134,8 +145,7 @@ const fetchWorkspaceFolders = () => {
   const workspaceFolders = vscode.workspace.workspaceFolders;
 
   if (!workspaceFolders) {
-    processErrorMessage('Please open a folder first.');
-    return;
+    processErrorMessage(OPEN_FILE_ERROR);
   }
   return workspaceFolders;
 };
@@ -148,17 +158,13 @@ const fetchWorkspaceFolders = () => {
  */
 const getFileType = async () => {
   try {
-    const typescript = ['tsx', 'ts'];
-    const javascript = ['jsx', 'js'];
-    const exclusionPath = '**/node_modules/**';
-
     const [tsFiles, jsonPackageFiles] = await Promise.all([
       vscode.workspace.findFiles('**/*.ts*', exclusionPath),
       vscode.workspace.findFiles(packageJson, exclusionPath),
     ]);
 
     if (tsFiles.length > 0) {
-      return typescript;
+      return TYPESCRIPT;
     }
 
     if (jsonPackageFiles.length > 0) {
@@ -166,16 +172,13 @@ const getFileType = async () => {
         await fs.readFile(jsonPackageFiles[0].fsPath, 'utf8')
       );
       if (jsonData.devDependencies && jsonData.devDependencies.typescript) {
-        return typescript;
+        return TYPESCRIPT;
       }
     }
 
-    return javascript;
+    return JAVASCRIPT;
   } catch (err) {
-    processErrorMessage(
-      `Failed to determine file type: ${err.message}`,
-      'minor'
-    );
+    processErrorMessage(createUnidentifiedFileTypeError(err.message), 'minor');
   }
 };
 
@@ -202,7 +205,7 @@ const getTargetFolder = async (options) => {
 
   // Let the user select a folder or use the active folder
   const selectedFolder = await showQuickPick(folderOptions, {
-    placeholder: 'Select the target folder',
+    placeholder: SELECT_TARGET_FOLDER,
   });
 
   if (!selectedFolder) {
@@ -219,7 +222,7 @@ const getTargetFolder = async (options) => {
       canSelectFolders: true,
       canSelectFiles: false,
       canSelectMany: false,
-      openLabel: 'Select a folder',
+      openLabel: SELECT_FOLDER,
     });
 
     if (folderUri && folderUri[0]) {
@@ -240,6 +243,13 @@ const getTargetFolder = async (options) => {
   return workspaceFolder;
 };
 
+/**
+ * Finds files in the workspace that match the given name pattern.
+ *
+ * @param {string} name - The glob pattern to match file names.
+ * @param {string} excludes - The glob pattern to exclude files.
+ * @returns {Promise<vscode.Uri[]>} A promise that resolves to an array of URIs of the matched files.
+ */
 const findFiles = async (name, excludes) => {
   return vscode.workspace.findFiles(name, excludes);
 };

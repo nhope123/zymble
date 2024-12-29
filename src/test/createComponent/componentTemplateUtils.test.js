@@ -7,7 +7,7 @@ const {
 } = require('../../commands/createComponent/componentTemplateUtils');
 const { describe, test, beforeEach, afterEach } = require('mocha');
 const sinon = require('sinon');
-const fileOps = require('../../commands/vscodeHelper/fileOperations'); 
+const fileOps = require('../../commands/vscodeHelper/fileOperations');
 
 describe('Component Template Utils', () => {
   describe('Create Component Props Definition', () => {
@@ -94,10 +94,12 @@ describe('', () => {
     });
   });
   describe('Generate Component Files', () => {
-    const getFileTypeStub = sinon.stub(fileOps, 'getFileType');
+    let getFileTypeStub;
 
     beforeEach(() => {
-      getFileTypeStub.resolves(['.jsx', '.js']);
+      getFileTypeStub = sinon
+        .stub(fileOps, 'getFileType')
+        .callsFake(() => ['.tsx', '.ts']);
     });
 
     afterEach(() => {
@@ -105,10 +107,10 @@ describe('', () => {
     });
 
     test('should generate correct files without props', async () => {
-      const componentName = 'TestComponent';
+      const componentName = 'FakeComponent';
       const expectedOutput = {
-        'TestComponent.jsx': `import { FC } from 'react';\n\nconst TestComponent: FC = () => {\n  \n  return <div>TestComponent Component</div>;\n};\n  \nexport default TestComponent;\n  `,
-        'TestComponent.test.jsx': `import { render } from '@testing-library/react';\nimport { describe, expect, it } from 'vitest';\nimport TestComponent from './TestComponent';\n\ndescribe('TestComponent', () => {  \n  it('renders TestComponent', () => {\n    const { getByText } = render(<TestComponent />);\n\n    expect(getByText('TestComponent Component')).toBeInTheDocument();\n  });\n});\n`,
+        'FakeComponent.jsx': `import { FC } from 'react';\n\nconst FakeComponent: FC = () => {\n  \n  return <div>FakeComponent Component</div>;\n};\n  \nexport default FakeComponent;\n  `,
+        'FakeComponent.test.jsx': `import { render } from '@testing-library/react';\nimport { describe, expect, it } from 'vitest';\nimport FakeComponent from './FakeComponent';\n\ndescribe('FakeComponent', () => {  \n  it('renders FakeComponent', () => {\n    const { getByText } = render(<FakeComponent />);\n\n    expect(getByText('FakeComponent Component')).toBeInTheDocument();\n  });\n});\n`,
       };
 
       const result = await generateComponentFiles(componentName);
